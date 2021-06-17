@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'conexaoFirestore.dart';
 
 class CadastroAplicador extends StatefulWidget {
   const CadastroAplicador(this.dadosRegistro, {Key? key, this.title})
@@ -12,6 +13,7 @@ class CadastroAplicador extends StatefulWidget {
 class _CadastroAplicadorState extends State<CadastroAplicador> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
+  String? nome;
   Widget _campoInput(String variavelDesejada, Size tamanhoDispositivo) {
     return TextFormField(
       textInputAction: TextInputAction.next,
@@ -23,8 +25,8 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
             .headline5!
             .copyWith(fontSize: tamanhoDispositivo.width * .05),
       ),
-      onChanged: (val) =>
-          setState(() => widget.dadosRegistro![variavelDesejada] = val),
+      onChanged: (val) => setState(
+          () => /*widget.dadosRegistro![variavelDesejada]*/ nome = val),
     );
   }
 
@@ -66,8 +68,10 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                           icon: Icon(_obscureText
                               ? Icons.visibility
                               : Icons.visibility_off),
-                          onPressed: () =>
-                              setState(() => _obscureText = !_obscureText)),
+                          onPressed: () => setState(() {
+                                _obscureText = !_obscureText;
+                                print('teste');
+                              })),
                       hintText: "Digite sua senha.",
                       hintStyle: Theme.of(context)
                           .textTheme
@@ -83,8 +87,11 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   _campoInput('token de registro', tamanhoDispositivo),
                   Spacer(),
                   ElevatedButton(
-                      onPressed: () async =>
-                          setState(() => _formKey.currentState!.validate()),
+                      onPressed: () async {
+                        setState(() => _formKey.currentState!.validate());
+                        registroVacinado(nome);
+                        print(nome);
+                      },
                       child: Text('Testar'))
                 ],
               ),

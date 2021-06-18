@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:select_form_field/select_form_field.dart';
-
+import 'conexaoFirestore.dart';
 
 class TelaFormulario extends StatefulWidget {
   @override
@@ -10,18 +11,21 @@ class TelaFormulario extends StatefulWidget {
 }
 
 class _TelaFormularioState extends State<TelaFormulario> {
-
   final List<Map<String, dynamic>> _items = [
-  {
-    'value': 'boxValue',
-    'label': 'Box Label',
-  },
-  {
-    'value': 'circleValue',
-    'label': 'Circle Label',
-  },
-];
+    {
+      'value': 'boxValue',
+      'label': 'Box Label',
+    },
+    {
+      'value': 'circleValue',
+      'label': 'Circle Label',
+    },
+  ];
   final _formKey = GlobalKey<FormState>();
+  Map<String, dynamic> vacinado = {};
+  String? dropdownValue;
+  bool botao = false;
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -33,65 +37,103 @@ class _TelaFormularioState extends State<TelaFormulario> {
       ),
       body: Center(
         child: Container(
-          height: tamanhoDispositivo.height*0.85,
-          width: tamanhoDispositivo.height*0.8,
+          height: tamanhoDispositivo.height * 0.85,
+          width: tamanhoDispositivo.height * 0.8,
           decoration: BoxDecoration(border: Border.all()),
           padding: EdgeInsets.all(32),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
-                          child: Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "Nome"  
-                    )
+                  Row(
+                    children: [
+                      Spacer(),
+                      Text('Usar CNS'),
+                      Switch(
+                          value: botao,
+                          onChanged: (_) => setState(() {
+                                botao = !botao;
+                              })),
+                      Text('Usar CPF'),
+                      Spacer(),
+                    ],
                   ),
                   TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "email"  
-                    )
+                    decoration: InputDecoration(hintText: "Nome"),
+                    validator: (input) =>
+                        input!.isEmpty ? 'Digite seu nome.' : null,
+                    onChanged: (input) => vacinado['Nome'] = input,
                   ),
                   TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "CPF"  
-                    )
+                    decoration: InputDecoration(hintText: "email"),
+                    validator: (input) =>
+                        input!.isEmpty ? 'Digite seu email.' : null,
+                    onChanged: (input) => vacinado['Email'] = input,
                   ),
                   TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "Telefone"  
-                    )
+                      decoration:
+                          InputDecoration(hintText: botao ? 'CPF' : 'CNS'),
+                      validator: (input) => input!.isEmpty
+                          ? 'Digite seu ${botao ? 'CPF' : 'CNS'}.'
+                          : null,
+                      onChanged: (input) =>
+                          vacinado[botao ? 'CPF' : 'CNS'] = input,
+                      keyboardType: TextInputType.number),
+                  TextFormField(
+                    decoration: InputDecoration(hintText: "Telefone"),
+                    validator: (input) =>
+                        input!.isEmpty ? 'Digite seu telefone.' : null,
+                    onChanged: (input) => vacinado['Telefone'] = input,
+                    keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "Sexo"  
-                    )
-                  ),
-                  
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "Endereço"  
-                    )
+                    decoration: InputDecoration(hintText: "Endereço"),
+                    validator: (input) =>
+                        input!.isEmpty ? 'Digite seu endereço.' : null,
+                    onChanged: (input) => vacinado['Endereço'] = input,
                   ),
                   DateTimeField(
-                    decoration: InputDecoration(
-                      hintText: "Data de Nascimento"  
-                    ),
-                  format: format,
-                  onShowPicker: (context, currentValue) {
-                  return showDatePicker(
-                  context: context,
-                  firstDate: DateTime(1900),
-                  initialDate: currentValue ?? DateTime.now(),
-                  lastDate: DateTime(2022));
-        },
-      ),
+                    decoration: InputDecoration(hintText: "Data de Nascimento"),
+                    onChanged: (input) => vacinado['Data'] = input,
+                    format: format,
+                    onShowPicker: (context, currentValue) {
+                      return showDatePicker(
+                          context: context,
+                          firstDate: DateTime(1900),
+                          initialDate: currentValue ?? DateTime.now(),
+                          lastDate: DateTime(2022));
+                    },
+                  ),
+                  DropdownButton<String>(
+                    value: dropdownValue,
+                    hint: Text('Selecione seu sexo'),
+                    dropdownColor: Colors.lightGreen[200],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                        vacinado['Sexo'] = dropdownValue;
+                      });
+                    },
+                    items: <String>['Masculino', 'Feminino']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                   ElevatedButton(
-                        onPressed: () async {
-                          setState(() => _formKey.currentState!.validate());
-                        },
-                        child: Text('Testar'))
+                      onPressed: () async {
+                        print(vacinado);
+                        setState(() {
+                          if (_formKey.currentState!.validate()) {
+                            registroVacinado(vacinado);
+                          }
+                        });
+                      },
+                      child: Text('Testar'))
                 ],
               ),
             ),
@@ -101,4 +143,3 @@ class _TelaFormularioState extends State<TelaFormulario> {
     );
   }
 }
-

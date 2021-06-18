@@ -89,7 +89,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   ElevatedButton(
                       onPressed: () async {
                         setState(() => _formKey.currentState!.validate());
-                        registroVacinado(nome);
+                        // registroVacinado(nome);
                         print(nome);
                       },
                       child: Text('Testar'))

@@ -17,7 +17,7 @@ class _TelaVacinadorState extends State<TelaVacinador> {
           "Tela do Vacinador",
           textAlign: TextAlign.center,
         ),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: Colors.green,
       ),
       body: Center(
         child: Container(

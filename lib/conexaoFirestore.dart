@@ -15,7 +15,13 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
       'Telefone': vacinado['Telefone'],
       'Sexo': vacinado['Sexo'],
       'Endereco': vacinado['Endereço'],
-      'Data de nascimento': vacinado['Data']
+      'Data de nascimento': vacinado['Nascimento'],
+      'Dose': vacinado['Dose'],
+      // 'Vacina': vacinado['Vacina'],
+      // 'Lote': vacinado['Lote'],
+      'Grupo': vacinado['Grupo'],
+      'Local de aplicação': vacinado['Local'],
+      'Data de aplicação': vacinado['Data'],
     });
   } catch (e) {
     print("pegou " + e.toString());

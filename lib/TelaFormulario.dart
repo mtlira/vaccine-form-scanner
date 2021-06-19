@@ -1,9 +1,11 @@
+import 'package:aplicativo/TelaFormularioVacina.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:select_form_field/select_form_field.dart';
 import 'conexaoFirestore.dart';
+import 'TelaFormularioVacina.dart';
 
 class TelaFormulario extends StatefulWidget {
   @override
@@ -25,21 +27,20 @@ class _TelaFormularioState extends State<TelaFormulario> {
   Map<String, dynamic> vacinado = {};
   String? dropdownValue;
   bool botao = false;
-
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     final format = DateFormat("yyyy-MM-dd");
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tela de Formulário"),
+        title: Text("Tela de Formulário - Paciente"),
         backgroundColor: Colors.green,
       ),
       body: Center(
         child: Container(
           height: tamanhoDispositivo.height * 0.85,
           width: tamanhoDispositivo.height * 0.8,
-          decoration: BoxDecoration(border: Border.all()),
+          // decoration: BoxDecoration(border: Border.all()),
           padding: EdgeInsets.all(32),
           child: Form(
             key: _formKey,
@@ -65,6 +66,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                     validator: (input) =>
                         input!.isEmpty ? 'Digite seu nome.' : null,
                     onChanged: (input) => vacinado['Nome'] = input,
+                    initialValue: vacinado['Nome'],
                   ),
                   TextFormField(
                     decoration: InputDecoration(hintText: "email"),
@@ -96,7 +98,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   DateTimeField(
                     decoration: InputDecoration(hintText: "Data de Nascimento"),
-                    onChanged: (input) => vacinado['Data'] = input,
+                    onChanged: (input) => vacinado['Nascimento'] = input,
                     format: format,
                     onShowPicker: (context, currentValue) {
                       return showDatePicker(
@@ -128,12 +130,17 @@ class _TelaFormularioState extends State<TelaFormulario> {
                       onPressed: () async {
                         print(vacinado);
                         setState(() {
-                          if (_formKey.currentState!.validate()) {
-                            registroVacinado(vacinado);
-                          }
+                          final now = new DateTime.now();
+                          vacinado['Data'] = DateFormat('yMd').format(now);
+                          //if (_formKey.currentState!.validate())
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TelaVacina(vacinado)));
+                          //registroVacinado(vacinado);
                         });
                       },
-                      child: Text('Testar'))
+                      child: Text('Próximo'))
                 ],
               ),
             ),

@@ -6,6 +6,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:select_form_field/select_form_field.dart';
 import 'conexaoFirestore.dart';
 import 'TelaFormularioVacina.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TelaFormulario extends StatefulWidget {
   @override
@@ -27,10 +28,14 @@ class _TelaFormularioState extends State<TelaFormulario> {
   Map<String, dynamic> vacinado = {};
   String? dropdownValue;
   bool botao = false;
+  var maskFormatterCPF = MaskTextInputFormatter(mask: '###.###.###-##');
+
+  var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
-    final format = DateFormat("yyyy-MM-dd");
+    final format = DateFormat("dd/MM/yyyy");
     return Scaffold(
       appBar: AppBar(
         title: Text("Tela de Formulário - Paciente"),
@@ -62,19 +67,26 @@ class _TelaFormularioState extends State<TelaFormulario> {
                     ],
                   ),
                   TextFormField(
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Nome"),
                     validator: (input) =>
-                        input!.isEmpty ? 'Digite seu nome.' : null,
+                        input!.isEmpty ? 'Digite o nome.' : null,
                     onChanged: (input) => vacinado['Nome'] = input,
                     initialValue: vacinado['Nome'],
                   ),
                   TextFormField(
-                    decoration: InputDecoration(hintText: "email"),
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(hintText: "Email"),
                     validator: (input) =>
-                        input!.isEmpty ? 'Digite seu email.' : null,
+                        input!.isEmpty ? 'Digite o email.' : null,
                     onChanged: (input) => vacinado['Email'] = input,
                   ),
                   TextFormField(
+                      textInputAction: TextInputAction.next,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(botao ? 11 : 15),
+                        //(botao ? maskFormatterCPF : maskFormatterCNS)
+                      ],
                       decoration:
                           InputDecoration(hintText: botao ? 'CPF' : 'CNS'),
                       validator: (input) => input!.isEmpty
@@ -84,16 +96,21 @@ class _TelaFormularioState extends State<TelaFormulario> {
                           vacinado[botao ? 'CPF' : 'CNS'] = input,
                       keyboardType: TextInputType.number),
                   TextFormField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                    ],
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Telefone"),
                     validator: (input) =>
-                        input!.isEmpty ? 'Digite seu telefone.' : null,
+                        input!.isEmpty ? 'Digite o telefone.' : null,
                     onChanged: (input) => vacinado['Telefone'] = input,
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Endereço"),
                     validator: (input) =>
-                        input!.isEmpty ? 'Digite seu endereço.' : null,
+                        input!.isEmpty ? 'Digite o endereço.' : null,
                     onChanged: (input) => vacinado['Endereço'] = input,
                   ),
                   DateTimeField(
@@ -108,10 +125,12 @@ class _TelaFormularioState extends State<TelaFormulario> {
                           lastDate: DateTime(2022));
                     },
                   ),
-                  DropdownButton<String>(
+                  DropdownButtonFormField<String>(
+                    validator: (value) =>
+                        value == null ? 'Preencha o sexo.' : null,
                     value: dropdownValue,
-                    hint: Text('Selecione seu sexo'),
-                    dropdownColor: Colors.lightGreen[200],
+                    hint: Text('Selecione o sexo'),
+                    dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
                         dropdownValue = newValue!;
@@ -126,18 +145,20 @@ class _TelaFormularioState extends State<TelaFormulario> {
                       );
                     }).toList(),
                   ),
+                  SizedBox(
+                    height: tamanhoDispositivo.height * .05,
+                  ),
                   ElevatedButton(
                       onPressed: () async {
-                        print(vacinado);
+                        vacinado['numeroDose'] = '1';
                         setState(() {
-                          final now = new DateTime.now();
-                          vacinado['Data'] = DateFormat('yMd').format(now);
-                          //if (_formKey.currentState!.validate())
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TelaVacina(vacinado)));
-                          //registroVacinado(vacinado);
+                          vacinado['Data'] = DateTime.now();
+                          if (_formKey.currentState!.validate())
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        TelaVacina(vacinado)));
                         });
                       },
                       child: Text('Próximo'))

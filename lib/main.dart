@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:aplicativo/TelaLogin.dart';
+import 'TelaLogin.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       //         'Página de cadastro do aplicador'), // Define que a classe inicial é o "selecao" que esta no arquivo selecao.dart
       theme: ThemeData(
           primarySwatch: Colors.green,
-          scaffoldBackgroundColor: Colors.lightGreen[200]),
+          scaffoldBackgroundColor: Colors.lightGreen[100]),
     );
     // }
     // return Container();

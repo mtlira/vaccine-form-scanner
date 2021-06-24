@@ -9,25 +9,16 @@ import 'TelaFormularioVacina.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TelaFormulario extends StatefulWidget {
+  TelaFormulario(this.vacinado, {Key? key}) : super(key: key);
+  Map<String, dynamic> vacinado;
   @override
   _TelaFormularioState createState() => _TelaFormularioState();
 }
 
 class _TelaFormularioState extends State<TelaFormulario> {
-  final List<Map<String, dynamic>> _items = [
-    {
-      'value': 'boxValue',
-      'label': 'Box Label',
-    },
-    {
-      'value': 'circleValue',
-      'label': 'Circle Label',
-    },
-  ];
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic> vacinado = {};
+
   String? dropdownValue;
-  bool botao = false;
   var maskFormatterCPF = MaskTextInputFormatter(mask: '###.###.###-##');
 
   var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
@@ -53,57 +44,39 @@ class _TelaFormularioState extends State<TelaFormulario> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Row(
-                    children: [
-                      Spacer(),
-                      Text('Usar CNS'),
-                      Switch(
-                          value: botao,
-                          onChanged: (_) => setState(() {
-                                botao = !botao;
-                              })),
-                      Text('Usar CPF'),
-                      Spacer(),
-                    ],
-                  ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Nome"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o nome.' : null,
-                    onChanged: (input) => vacinado['Nome'] = input,
-                    initialValue: vacinado['Nome'],
+                    onChanged: (input) => widget.vacinado['Nome'] = input,
+                    initialValue: widget.vacinado['Nome'],
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Email"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o email.' : null,
-                    onChanged: (input) => vacinado['Email'] = input,
+                    onChanged: (input) => widget.vacinado['Email'] = input,
                   ),
                   TextFormField(
-                      textInputAction: TextInputAction.next,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(botao ? 11 : 15),
-                        //(botao ? maskFormatterCPF : maskFormatterCNS)
-                      ],
-                      decoration:
-                          InputDecoration(hintText: botao ? 'CPF' : 'CNS'),
-                      validator: (input) => input!.isEmpty
-                          ? 'Digite seu ${botao ? 'CPF' : 'CNS'}.'
-                          : null,
-                      onChanged: (input) =>
-                          vacinado[botao ? 'CPF' : 'CNS'] = input,
-                      keyboardType: TextInputType.number),
-                  TextFormField(
+                    enabled: false,
                     inputFormatters: [
-                      LengthLimitingTextInputFormatter(11),
+                      widget.vacinado['botao']
+                          ? maskFormatterCPF
+                          : maskFormatterCNS
                     ],
+                    initialValue: widget.vacinado['botao']
+                        ? widget.vacinado['CPF']
+                        : widget.vacinado['CNS'],
+                  ),
+                  TextFormField(
+                    inputFormatters: [LengthLimitingTextInputFormatter(11)],
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(hintText: "Telefone"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o telefone.' : null,
-                    onChanged: (input) => vacinado['Telefone'] = input,
+                    onChanged: (input) => widget.vacinado['Telefone'] = input,
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
@@ -111,11 +84,11 @@ class _TelaFormularioState extends State<TelaFormulario> {
                     decoration: InputDecoration(hintText: "Endereço"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o endereço.' : null,
-                    onChanged: (input) => vacinado['Endereço'] = input,
+                    onChanged: (input) => widget.vacinado['Endereço'] = input,
                   ),
                   DateTimeField(
                     decoration: InputDecoration(hintText: "Data de Nascimento"),
-                    onChanged: (input) => vacinado['Nascimento'] = input,
+                    onChanged: (input) => widget.vacinado['Nascimento'] = input,
                     format: format,
                     onShowPicker: (context, currentValue) {
                       return showDatePicker(
@@ -134,7 +107,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                     onChanged: (String? newValue) {
                       setState(() {
                         dropdownValue = newValue!;
-                        vacinado['Sexo'] = dropdownValue;
+                        widget.vacinado['Sexo'] = dropdownValue;
                       });
                     },
                     items: <String>['Masculino', 'Feminino']
@@ -150,15 +123,15 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   ElevatedButton(
                       onPressed: () async {
-                        vacinado['numeroDose'] = '1';
+                        widget.vacinado['numeroDose'] = '1';
                         setState(() {
-                          vacinado['Data'] = DateTime.now();
+                          widget.vacinado['Data'] = DateTime.now();
                           if (_formKey.currentState!.validate())
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        TelaVacina(vacinado)));
+                                        TelaVacina(widget.vacinado)));
                         });
                       },
                       child: Text('Próximo'))

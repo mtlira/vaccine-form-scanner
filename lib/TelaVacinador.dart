@@ -1,3 +1,4 @@
+import 'package:aplicativo/TelaCPFCNS.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'TelaFormulario.dart';
@@ -34,10 +35,8 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                 ),
                 // padding: EdgeInsets.all(24),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TelaFormulario()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TelaCPFCNS()));
                 },
               ),
               ElevatedButton(

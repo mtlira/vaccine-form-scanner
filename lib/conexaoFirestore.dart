@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
   try {
-    await Firebase.initializeApp();
     await FirebaseFirestore.instance
         .collection('vacinados')
         .doc(_cpfOuCns(vacinado))
@@ -24,6 +23,12 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
       //'Data de aplicação': vacinado['Data'],
     }, SetOptions(merge: true));
   } catch (e) {
+    print("pegou " + e.toString());
+  }
+}
+
+Future<void> registroAplicador(Map<String, dynamic> aplicador) async {
+  try {} catch (e) {
     print("pegou " + e.toString());
   }
 }

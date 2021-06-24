@@ -1,3 +1,4 @@
+import 'package:aplicativo/TelaAdmnistrador.dart';
 import 'package:flutter/material.dart';
 import 'TelaCadastroAplicador.dart';
 import 'TelaVacinador.dart';
@@ -62,7 +63,15 @@ class _TelaLoginState extends State<TelaLogin> {
                               title: 'Página de cadastro do aplicador'),
                         ));
                   },
-                  child: Text('Ir para tela de cadastro do aplicador'))
+                  child: Text('Ir para tela de cadastro do aplicador')),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaAdministrador()));
+                  },
+                  child: Text('Ir para tela do administrador'))
             ],
           ),
         ),

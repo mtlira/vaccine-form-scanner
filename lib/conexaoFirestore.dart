@@ -33,6 +33,22 @@ Future<void> registroAplicador(Map<String, dynamic> aplicador) async {
   }
 }
 
+Future<dynamic> pegarDadosVacinado(String? cpfCns, bool botao) async {
+  try {
+    return FirebaseFirestore.instance.collection('vacinados').doc(cpfCns).get();
+  } catch (e) {
+    print("pegou " + e.toString());
+  }
+}
+
+Future<dynamic> pegarDadosVacinas() async {
+  try {
+    return FirebaseFirestore.instance.collection('dados_vacinacao').get();
+  } catch (e) {
+    print("pegou " + e.toString());
+  }
+}
+
 String _cpfOuCns(Map<String, dynamic> vacinado) {
   if (vacinado['CPF'] == null) return vacinado['CNS'];
   return vacinado['CPF'];

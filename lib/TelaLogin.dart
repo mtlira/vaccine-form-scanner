@@ -1,7 +1,10 @@
 import 'package:aplicativo/TelaAdmnistrador.dart';
+import 'package:aplicativo/TelaFormularioVacina.dart';
 import 'package:flutter/material.dart';
 import 'TelaCadastroAplicador.dart';
 import 'TelaVacinador.dart';
+import 'conexaoFirestore.dart';
+import 'package:flutter/scheduler.dart';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin(this.dadosRegistro, {Key? key, this.title}) : super(key: key);
@@ -12,6 +15,43 @@ class TelaLogin extends StatefulWidget {
 }
 
 class _TelaLoginState extends State<TelaLogin> {
+
+  
+  bool apertado = false;
+  bool passar = false;
+
+  FutureBuilder _dadosVacinas(){
+    return FutureBuilder(
+      future: pegarDadosVacinas(),
+      builder: (context, snapshot) {
+        dynamic dados_vacinacao = [];
+        if (apertado) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return CircularProgressIndicator();
+          if (snapshot.connectionState == ConnectionState.done){
+            snapshot.data.docs.forEach((doc) => {dados_vacinacao.add(doc.data())});
+            print(dados_vacinacao);
+            print(passar);
+            if (passar) {
+              passar = false;
+              SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaVacinador(dados_vacinacao)));
+                  });
+            }
+          }
+          if (snapshot.hasError){
+            print("Erro: ${snapshot.error}");
+          }
+           return Container();
+        }
+        return Container();
+      });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -48,10 +88,15 @@ class _TelaLoginState extends State<TelaLogin> {
                 child: Text("Ir para tela do vacinador"),
                 // padding: EdgeInsets.all(15),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TelaVacinador()));
+                  setState(() {
+                  apertado = true;
+                  passar = true;
+                  });
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => TelaVacinador()));
                 },
               ),
+              _dadosVacinas(),
               Spacer(flex: 2),
               ElevatedButton(
                   onPressed: () {

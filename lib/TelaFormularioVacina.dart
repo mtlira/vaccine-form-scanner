@@ -11,8 +11,9 @@ import 'conexaoFirestore.dart';
 import 'TelaFormularioVacina.dart';
 
 class TelaVacina extends StatefulWidget {
-  TelaVacina(this.vacinado, {Key? key}) : super(key: key);
+  TelaVacina(this.vacinado, this.dados_vacinacao, {Key? key}) : super(key: key);
   Map<String, dynamic> vacinado;
+  dynamic dados_vacinacao;
   @override
   _TelaVacinaState createState() => _TelaVacinaState();
 }
@@ -68,6 +69,26 @@ class _TelaVacinaState extends State<TelaVacina> {
     return Container();
   }
 
+  List<String> _lotes(String? vacina){
+    List<String> lotes = [];
+    widget.dados_vacinacao.forEach((valor) => {
+      if (valor["Nome"] == vacina) {
+        lotes = List<String>.from(valor["Lotes"] as List)
+      } 
+    });
+    return lotes;
+  }
+
+  List<String> _grupos(){
+    List<String> lotes = [];
+    widget.dados_vacinacao.forEach((valor) => {
+      if (valor["Nome"] == "Grupos") {
+        lotes = List<String>.from(valor["Grupos"] as List)
+      } 
+    });
+    return lotes;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -117,7 +138,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                       });
                     },
                     items: <String>[
-                      'ASTRAZENECA/OXFORD/FIOCRUZ',
+                      'ASTRAZENECA',
                       'CORONAVAC',
                       'JANSSEN',
                       'PFIZER',
@@ -141,13 +162,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                         dose['Lote'] = dropdownValueLote;
                       });
                     },
-                    items: <String>[
-                      'L50000',
-                      'L50001',
-                      'L50002',
-                      'L50003',
-                      'L50004',
-                    ].map<DropdownMenuItem<String>>((String value) {
+                    items: _lotes(dose['Vacina']).map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -168,27 +183,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                         widget.vacinado['Grupo'] = dropdownValueOcupacao;
                       });
                     },
-                    items: <String>[
-                      'AEROVIARIOS',
-                      'COMORBIDADE',
-                      'ESTUDO CLINICO',
-                      'IDOSO',
-                      'IDOSO EM ILPI',
-                      'INDIGENAS',
-                      'METROVIARIOS/CPTM',
-                      'MOTORISTAS E COBRADORES DE ONIBUS',
-                      'PESSOA >= 18 ANOS PORTADORA DE DEFICIENCIA RESIDENTES EM RI',
-                      'PESSOA COM DEFICIENCIA',
-                      'PESSOA COM DEFICIENCIA PERMANENTE SEVERA',
-                      'POPULACAO EM GERAL',
-                      'POPULACAO EM SITUACAO DE RUA',
-                      'PORTUARIOS',
-                      'QUILOMBOLA',
-                      'RIBEIRINHAS',
-                      'TRABALHADOR DA EDUCACAO',
-                      'TRABAHADOR DA SEGURANCA PUBLICA',
-                      'TRABALHADOR DE SAUDE',
-                    ].map<DropdownMenuItem<String>>((String value) {
+                    items: _grupos().map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -221,7 +216,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TelaVacinador()),
+                                  builder: (context) => TelaVacinador(widget.dados_vacinacao)),
                               (Route<dynamic> route) => false,
                             );
                           }

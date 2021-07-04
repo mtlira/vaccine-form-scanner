@@ -1,5 +1,6 @@
 import 'package:aplicativo/TelaAdmnistrador.dart';
 import 'package:aplicativo/TelaFormularioVacina.dart';
+import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'TelaCadastroAplicador.dart';
 import 'TelaVacinador.dart';
@@ -16,9 +17,13 @@ class TelaLogin extends StatefulWidget {
 
 class _TelaLoginState extends State<TelaLogin> {
 
-  
+  final AuthService _auth = AuthService();
+  final _formkey = GlobalKey<FormState>();
   bool apertado = false;
   bool passar = false;
+  String email = '';
+  String password = '';
+  String error = '';
 
   FutureBuilder _dadosVacinas(){
     return FutureBuilder(
@@ -74,15 +79,40 @@ class _TelaLoginState extends State<TelaLogin> {
             children: <Widget>[
               Spacer(flex: 2),
               Form(
+                  key: _formkey,
                   child: Column(children: [
                 TextFormField(
-                  decoration: InputDecoration(hintText: "Login"),
+                  decoration: InputDecoration(hintText: "Login (Email)"),                      
+                  validator: (val) =>val!.isEmpty ? 'Digite o email.' : null,
+                  onChanged: (val) {
+                    setState(()=>email=val);
+                  }
                 ),
                 TextFormField(
                   decoration: InputDecoration(hintText: "Senha"),
+                  validator: (val) =>val!.isEmpty ? 'Digite a senha.' : null,
+                  onChanged: (val) {
+                    setState(()=>password=val);
+                  }
                 )
               ])),
               Spacer(),
+              ElevatedButton (
+                child: Text ("Logar"),
+                onPressed: () async{
+                  if (_formkey.currentState!.validate()){
+                    dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                    if (result == null){
+                      print ("Senha ou email incorreto");
+                      setState(()=>error = 'Senha ou email incorreto');
+                    }
+                    else {
+                      print ("Logado com sucesso");
+                    }
+                  }
+                },
+
+              ),
               ElevatedButton(
                 // color: Colors.blue,
                 child: Text("Ir para tela do vacinador"),
@@ -97,7 +127,7 @@ class _TelaLoginState extends State<TelaLogin> {
                 },
               ),
               _dadosVacinas(),
-              Spacer(flex: 2),
+              //Spacer(),
               ElevatedButton(
                   onPressed: () {
                     Navigator.push(

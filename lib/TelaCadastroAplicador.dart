@@ -1,3 +1,4 @@
+import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
 
@@ -11,9 +12,16 @@ class CadastroAplicador extends StatefulWidget {
 }
 
 class _CadastroAplicadorState extends State<CadastroAplicador> {
+
+  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+
   bool _obscureText = true;
   String? nome;
+  String email = '';
+  String password = '';
+  String error = '';
+
   Widget _campoInput(String variavelDesejada, Size tamanhoDispositivo) {
     return TextFormField(
       textInputAction: TextInputAction.next,
@@ -49,16 +57,41 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   Spacer(),
                   _campoInput('nome', tamanhoDispositivo),
                   Spacer(),
-                  _campoInput('CPF', tamanhoDispositivo),
+                  //_campoInput('CPF', tamanhoDispositivo),
+                  //Spa/er(),
+                  //_campoInput('endereço completo', tamanhoDispositivo),
+                  //Spacer(),
+                  //_campoInput('nº do COREN', tamanhoDispositivo),
+                  //Spacer(),
+                  //_campoInput('telefone', tamanhoDispositivo),
+                  //Spacer(),
+
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    validator: (val) => val!.isEmpty ? 'Digite algo.' : null,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(_obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () => setState(() {
+                                _obscureText = !_obscureText;
+                                print('teste');
+                              })),
+                      hintText: "Digite seu email",
+                      hintStyle: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(fontSize: tamanhoDispositivo.width * .05),
+                      //
+                    ),
+                    obscureText: _obscureText,
+                    onChanged: (val) =>
+                        setState(() => email = val),
+                  ),
+                  
                   Spacer(),
-                  _campoInput('endereço completo', tamanhoDispositivo),
-                  Spacer(),
-                  _campoInput('nº do COREN', tamanhoDispositivo),
-                  Spacer(),
-                  _campoInput('telefone', tamanhoDispositivo),
-                  Spacer(),
-                  _campoInput('email', tamanhoDispositivo),
-                  Spacer(),
+
                   // Senha e token talvez serão separados, vamos ver isso depois.
                   TextFormField(
                     textInputAction: TextInputAction.next,
@@ -81,18 +114,29 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                     ),
                     obscureText: _obscureText,
                     onChanged: (val) =>
-                        setState(() => widget.dadosRegistro!['senha'] = val),
+                        setState(() => password = val),
                   ),
-                  Spacer(),
-                  _campoInput('token de registro', tamanhoDispositivo),
+                  
+                  //Spacer(),
+                  //_campoInput('token de registro', tamanhoDispositivo),
+                  
                   Spacer(),
                   ElevatedButton(
                       onPressed: () async {
                         setState(() => _formKey.currentState!.validate());
+                        dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                        if (result == null){
+                          setState(()=>error = 'email inválido');
+                        }
                         // registroVacinado(nome);
                         print(nome);
                       },
-                      child: Text('Testar'))
+                      child: Text('Testar')),
+
+                  Text(
+                    error, 
+                    style: TextStyle(color: Colors.red, fontSize:(14.0)),
+                  ),
                 ],
               ),
             ),

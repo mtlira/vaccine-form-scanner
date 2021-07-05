@@ -38,6 +38,20 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
     );
   }
 
+  String? _validarEmail(String? email) {
+    if (email!.isEmpty) return "Digite um email";
+    if (!RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(email)) return "O email digitado não é válido";
+    return null;
+  }
+
+  String? _validarSenha(String? senha) {
+    if (senha!.isEmpty) return "Digite uma senha";
+    if (senha.length < 6) return "A senha é muito curta.";
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -68,7 +82,8 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
 
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarEmail(
+                        val), //val!.isEmpty ? 'Digite algo.' : null,
                     decoration: InputDecoration(
                       hintText: "Digite seu email",
                       hintStyle: Theme.of(context)
@@ -77,7 +92,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                           .copyWith(fontSize: tamanhoDispositivo.width * .05),
                       //
                     ),
-                    obscureText: _obscureText,
                     onChanged: (val) => setState(() => email = val),
                   ),
 
@@ -86,7 +100,8 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   // Senha e token talvez serão separados, vamos ver isso depois.
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarSenha(
+                        val), //val!.isEmpty ? 'Digite algo.' : null,
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText
@@ -115,12 +130,12 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                                 .registerWithEmailAndPassword(email, password);
                             if (result == null) {
                               setState(() => error = 'email inválido');
-                            }
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TelaLogin(null)),
-                                (Route<dynamic> route) => false);
+                            } else
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TelaLogin(null)),
+                                  (Route<dynamic> route) => false);
                           }
                         });
                       },

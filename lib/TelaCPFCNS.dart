@@ -93,7 +93,8 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TelaFormulario(vacinado, widget.dados_vacinacao)));
+                          builder: (context) => TelaFormulario(
+                              vacinado, widget.dados_vacinacao)));
                 });
               }
               return Text('aaa');
@@ -133,7 +134,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
           Center(
             child: Container(
               width: tamanhoDispositivo.width * .8,
-              decoration: BoxDecoration(border: Border.all()),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

@@ -15,47 +15,49 @@ class TelaLogin extends StatefulWidget {
   _TelaLoginState createState() => _TelaLoginState();
 }
 
-class _TelaLoginState extends State<TelaLogin> {
+final AuthService auth = AuthService();
 
-  final AuthService _auth = AuthService();
+class _TelaLoginState extends State<TelaLogin> {
   final _formkey = GlobalKey<FormState>();
   bool apertado = false;
   bool passar = false;
   String email = '';
   String password = '';
   String error = '';
+  bool _obscureText = true;
 
-  FutureBuilder _dadosVacinas(){
+  FutureBuilder _dadosVacinas() {
     return FutureBuilder(
-      future: pegarDadosVacinas(),
-      builder: (context, snapshot) {
-        dynamic dados_vacinacao = [];
-        if (apertado) {
-          if (snapshot.connectionState == ConnectionState.waiting)
-            return CircularProgressIndicator();
-          if (snapshot.connectionState == ConnectionState.done){
-            snapshot.data.docs.forEach((doc) => {dados_vacinacao.add(doc.data())});
-            print(dados_vacinacao);
-            print(passar);
-            if (passar) {
-              passar = false;
-              SchedulerBinding.instance!.addPostFrameCallback((_) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TelaVacinador(dados_vacinacao)));
-                  });
+        future: pegarDadosVacinas(),
+        builder: (context, snapshot) {
+          dynamic dados_vacinacao = [];
+          if (apertado) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return CircularProgressIndicator();
+            if (snapshot.connectionState == ConnectionState.done) {
+              snapshot.data.docs
+                  .forEach((doc) => {dados_vacinacao.add(doc.data())});
+              print(dados_vacinacao);
+              print(passar);
+              if (passar) {
+                passar = false;
+                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TelaVacinador(dados_vacinacao)),
+                      (Route<dynamic> route) => false);
+                });
+              }
             }
+            if (snapshot.hasError) {
+              print("Erro: ${snapshot.error}");
+            }
+            return Container();
           }
-          if (snapshot.hasError){
-            print("Erro: ${snapshot.error}");
-          }
-           return Container();
-        }
-        return Container();
-      });
+          return Container();
+        });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -81,52 +83,55 @@ class _TelaLoginState extends State<TelaLogin> {
               Form(
                   key: _formkey,
                   child: Column(children: [
-                TextFormField(
-                  decoration: InputDecoration(hintText: "Login (Email)"),                      
-                  validator: (val) =>val!.isEmpty ? 'Digite o email.' : null,
-                  onChanged: (val) {
-                    setState(()=>email=val);
-                  }
-                ),
-                TextFormField(
-                  decoration: InputDecoration(hintText: "Senha"),
-                  validator: (val) =>val!.isEmpty ? 'Digite a senha.' : null,
-                  onChanged: (val) {
-                    setState(()=>password=val);
-                  }
-                )
-              ])),
+                    TextFormField(
+                        decoration: InputDecoration(hintText: "Email"),
+                        validator: (val) =>
+                            val!.isEmpty ? 'Digite o email.' : null,
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        }),
+                    TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "Senha",
+                          suffixIcon: IconButton(
+                              icon: Icon(_obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () => setState(() {
+                                    _obscureText = !_obscureText;
+                                    print('teste');
+                                  })),
+                        ),
+                        obscureText: _obscureText,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Digite a senha.' : null,
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        })
+                  ])),
               Spacer(),
-              ElevatedButton (
-                child: Text ("Logar"),
-                onPressed: () async{
-                  if (_formkey.currentState!.validate()){
-                    dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-                    if (result == null){
-                      print ("Senha ou email incorreto");
-                      setState(()=>error = 'Senha ou email incorreto');
-                    }
-                    else {
-                      print ("Logado com sucesso");
+              ElevatedButton(
+                child: Text("Logar"),
+                onPressed: () async {
+                  if (_formkey.currentState!.validate()) {
+                    dynamic result =
+                        await auth.signInWithEmailAndPassword(email, password);
+                    if (result == null) {
+                      print("Senha ou email incorreto");
+                      setState(() => error = 'Senha ou email incorreto');
+                    } else {
+                      setState(() {
+                        apertado = true;
+                        passar = true;
+                      });
+                      print("Logado com sucesso");
                     }
                   }
                 },
-
               ),
-              ElevatedButton(
-                // color: Colors.blue,
-                child: Text("Ir para tela do vacinador"),
-                // padding: EdgeInsets.all(15),
-                onPressed: () {
-                  setState(() {
-                  apertado = true;
-                  passar = true;
-                  });
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => TelaVacinador()));
-                },
-              ),
+              Text(error),
               _dadosVacinas(),
+              Spacer(),
               //Spacer(),
               ElevatedButton(
                   onPressed: () {
@@ -139,14 +144,6 @@ class _TelaLoginState extends State<TelaLogin> {
                         ));
                   },
                   child: Text('Ir para tela de cadastro do aplicador')),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TelaAdministrador()));
-                  },
-                  child: Text('Ir para tela do administrador'))
             ],
           ),
         ),

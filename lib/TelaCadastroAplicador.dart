@@ -1,6 +1,7 @@
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
+import 'TelaLogin.dart';
 
 class CadastroAplicador extends StatefulWidget {
   const CadastroAplicador(this.dadosRegistro, {Key? key, this.title})
@@ -12,7 +13,6 @@ class CadastroAplicador extends StatefulWidget {
 }
 
 class _CadastroAplicadorState extends State<CadastroAplicador> {
-
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -70,14 +70,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                     textInputAction: TextInputAction.next,
                     validator: (val) => val!.isEmpty ? 'Digite algo.' : null,
                     decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                          icon: Icon(_obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: () => setState(() {
-                                _obscureText = !_obscureText;
-                                print('teste');
-                              })),
                       hintText: "Digite seu email",
                       hintStyle: Theme.of(context)
                           .textTheme
@@ -86,10 +78,9 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                       //
                     ),
                     obscureText: _obscureText,
-                    onChanged: (val) =>
-                        setState(() => email = val),
+                    onChanged: (val) => setState(() => email = val),
                   ),
-                  
+
                   Spacer(),
 
                   // Senha e token talvez serão separados, vamos ver isso depois.
@@ -113,29 +104,31 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                       //
                     ),
                     obscureText: _obscureText,
-                    onChanged: (val) =>
-                        setState(() => password = val),
+                    onChanged: (val) => setState(() => password = val),
                   ),
-                  
-                  //Spacer(),
-                  //_campoInput('token de registro', tamanhoDispositivo),
-                  
                   Spacer(),
                   ElevatedButton(
-                      onPressed: () async {
-                        setState(() => _formKey.currentState!.validate());
-                        dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                        if (result == null){
-                          setState(()=>error = 'email inválido');
-                        }
-                        // registroVacinado(nome);
-                        print(nome);
+                      onPressed: () {
+                        setState(() async {
+                          if (_formKey.currentState!.validate()) {
+                            dynamic result = await _auth
+                                .registerWithEmailAndPassword(email, password);
+                            if (result == null) {
+                              setState(() => error = 'email inválido');
+                            }
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TelaLogin(null)),
+                                (Route<dynamic> route) => false);
+                          }
+                        });
                       },
-                      child: Text('Testar')),
+                      child: Text('Registrar')),
 
                   Text(
-                    error, 
-                    style: TextStyle(color: Colors.red, fontSize:(14.0)),
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: (14.0)),
                   ),
                 ],
               ),

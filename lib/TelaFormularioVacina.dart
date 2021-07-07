@@ -2,7 +2,6 @@ import 'package:aplicativo/TelaFormulario.dart';
 import 'package:aplicativo/TelaVacinador.dart';
 import 'package:flutter/material.dart';
 import 'package:aplicativo/TelaFormularioVacina.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';

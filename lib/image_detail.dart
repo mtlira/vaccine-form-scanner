@@ -1,5 +1,3 @@
-// Inside image_detail.dart file
-
 import 'package:flutter/material.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'dart:io';
@@ -238,7 +236,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     if (tipo == "SEXO") {
-      if (campos[indiceValorCampo] == "E" or campos[indiceValorCampo] == "4") campos[indiceValorCampo] = "F";
+      if (campos[indiceValorCampo] == "E" || campos[indiceValorCampo] == "4") campos[indiceValorCampo] = "F";
       else campos[indiceValorCampo] = "M";
     }
     if (tipo == "ENDEREÇO") {

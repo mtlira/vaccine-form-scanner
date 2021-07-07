@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'TelaFormulario.dart';
 import 'TelaScan.dart';
 
+
 class TelaVacinador extends StatefulWidget {
   @override
   _TelaVacinadorState createState() => _TelaVacinadorState();
@@ -48,8 +49,12 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                 ),
                 // padding: EdgeInsets.all(24),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TelaScan()));
+                  Scanner_main();
+                  //print('passei do scanner main');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Scanner()));
                 },
               )
             ],

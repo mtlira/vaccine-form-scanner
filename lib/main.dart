@@ -11,7 +11,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
-  Map<String, dynamic>? dadosRegistro;
+  Map<String, dynamic> dadosRegistro = {};
 
   @override
   Widget build(BuildContext context) {

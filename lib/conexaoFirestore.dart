@@ -13,6 +13,7 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
       'CNS': vacinado['CNS'],
       'Telefone': vacinado['Telefone'],
       'Sexo': vacinado['Sexo'],
+      'Condicao': vacinado['Condicao'],
       'Endereco': vacinado['Endereço'],
       'Data de nascimento': vacinado['Nascimento'],
       '${_primeiraOuSegundaDose(vacinado)}': vacinado['Dose'],
@@ -28,7 +29,17 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
 }
 
 Future<void> registroAplicador(Map<String, dynamic> aplicador) async {
-  try {} catch (e) {
+  try {
+    await FirebaseFirestore.instance
+        .collection('aplicadores')
+        .doc(aplicador['Email'])
+        .set({
+      'nome': aplicador['Nome'],
+      'email': aplicador['Email'],
+      'CPF': aplicador['CPF'],
+      'Coren': aplicador['Coren'],
+    }, SetOptions(merge: true));
+  } catch (e) {
     print("pegou " + e.toString());
   }
 }
@@ -57,4 +68,12 @@ String _cpfOuCns(Map<String, dynamic> vacinado) {
 String _primeiraOuSegundaDose(Map<String, dynamic> vacinado) {
   if (vacinado['numeroDose'] == '1') return '1a dose';
   return '2a dose';
+}
+
+Future<dynamic> pegarDadosAplicador(String? email) async {
+  try {
+    return FirebaseFirestore.instance.collection('vacinador').doc(email).get();
+  } catch (e) {
+    print("pegou " + e.toString());
+  }
 }

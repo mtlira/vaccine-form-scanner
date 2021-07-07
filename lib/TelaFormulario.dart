@@ -7,9 +7,11 @@ import 'package:select_form_field/select_form_field.dart';
 import 'conexaoFirestore.dart';
 import 'TelaFormularioVacina.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class TelaFormulario extends StatefulWidget {
-  TelaFormulario(this.vacinado, this.dados_vacinacao, {Key? key}) : super(key: key);
+  TelaFormulario(this.vacinado, this.dados_vacinacao, {Key? key})
+      : super(key: key);
   Map<String, dynamic> vacinado;
   dynamic dados_vacinacao;
   @override
@@ -19,16 +21,26 @@ class TelaFormulario extends StatefulWidget {
 class _TelaFormularioState extends State<TelaFormulario> {
   final _formKey = GlobalKey<FormState>();
 
-  String? dropdownValue;
+  String? dropdownValueSexo, dropdownValueRaca;
   var maskFormatterCPF = MaskTextInputFormatter(mask: '###.###.###-##');
 
   var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
+
+  int _gestantePuerpera() {
+    if (widget.vacinado['Condicao'] == 'Gestante')
+      return 0;
+    else if (widget.vacinado['Condicao'] == 'N.A.')
+      return 1;
+    else if (widget.vacinado['Condicao'] == 'Puérpera') return 2;
+    return 1;
+  }
 
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     final format = DateFormat("dd/MM/yyyy");
-    dropdownValue = widget.vacinado['Sexo'];
+    dropdownValueSexo = widget.vacinado['Sexo'];
+    dropdownValueRaca = widget.vacinado['Raça'];
     return Scaffold(
       appBar: AppBar(
         title: Text("Tela de Formulário - Paciente"),
@@ -38,8 +50,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
         child: Container(
           height: tamanhoDispositivo.height * 0.85,
           width: tamanhoDispositivo.height * 0.8,
-          // decoration: BoxDecoration(border: Border.all()),
-          padding: EdgeInsets.all(32),
+          padding:
+              EdgeInsets.symmetric(horizontal: tamanhoDispositivo.width * .05),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -53,6 +65,22 @@ class _TelaFormularioState extends State<TelaFormulario> {
                         input!.isEmpty ? 'Digite o nome.' : null,
                     onChanged: (input) => widget.vacinado['Nome'] = input,
                     initialValue: widget.vacinado['Nome'],
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(hintText: "Nome da mãe"),
+                    validator: (input) =>
+                        input!.isEmpty ? 'Digite o nome da mãe.' : null,
+                    onChanged: (input) =>
+                        widget.vacinado['Nome da mãe'] = input,
+                    initialValue: widget.vacinado['Nome da mãe'],
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(hintText: "Nome social"),
+                    onChanged: (input) =>
+                        widget.vacinado['Nome social'] = input,
+                    initialValue: widget.vacinado['Nome social'],
                   ),
                   TextFormField(
                       textInputAction: TextInputAction.next,
@@ -106,22 +134,65 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   DropdownButtonFormField<String>(
                     validator: (value) =>
                         value == null ? 'Preencha o sexo.' : null,
-                    value: dropdownValue,
+                    value: dropdownValueSexo,
                     hint: Text('Selecione o sexo'),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownValue = newValue!;
-                        widget.vacinado['Sexo'] = dropdownValue;
+                        dropdownValueSexo = newValue!;
+                        widget.vacinado['Sexo'] = dropdownValueSexo;
                       });
                     },
-                    items: <String>['Masculino', 'Feminino']
+                    items: <String>['Masculino', 'Feminino', 'Ignorado']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
                       );
                     }).toList(),
+                  ),
+                  DropdownButtonFormField<String>(
+                    validator: (value) =>
+                        value == null ? 'Preencha a raça.' : null,
+                    value: dropdownValueRaca,
+                    hint: Text('Selecione a raça'),
+                    dropdownColor: Colors.lightGreen[100],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValueRaca = newValue!;
+                        widget.vacinado['Raça'] = dropdownValueRaca;
+                      });
+                    },
+                    items: <String>[
+                      'Amarela',
+                      'Branca',
+                      'Indígena',
+                      'Não informada',
+                      'Parda',
+                      'Preta'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(
+                    height: tamanhoDispositivo.height * .05,
+                  ),
+                  ToggleSwitch(
+                    totalSwitches: 3,
+                    labels: ['Gestante', 'N.A.', 'Puérpera'],
+                    initialLabelIndex: _gestantePuerpera(),
+                    onToggle: (index) {
+                      (index == 0)
+                          ? widget.vacinado['Condicao'] = 'Gestante'
+                          : (index == 1)
+                              ? widget.vacinado['Condicao'] = 'N.A.'
+                              : (index == 2)
+                                  ? widget.vacinado['Condicao'] = 'Puérpera'
+                                  : widget.vacinado['Condicao'] = null;
+                    },
                   ),
                   SizedBox(
                     height: tamanhoDispositivo.height * .05,
@@ -135,8 +206,9 @@ class _TelaFormularioState extends State<TelaFormulario> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        TelaVacina(widget.vacinado, widget.dados_vacinacao)));
+                                    builder: (context) => TelaVacina(
+                                        widget.vacinado,
+                                        widget.dados_vacinacao)));
                         });
                       },
                       child: Text('Próximo'))

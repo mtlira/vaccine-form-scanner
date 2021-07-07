@@ -58,7 +58,22 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
         return null;
       }
     }
-    if (!botao) if (input.length != 15) return "Digite o CNS completo.";
+    if (!botao) {
+      return null;
+      if (input.length != 15) return "Digite o CNS completo.";
+      if (RegExp("[1-2]\\d{10}00[0-1]\\d").hasMatch(input) ||
+          RegExp("[7-9]\\d{14}")
+              .hasMatch(input)) if (somaPonderada(input) % 11 == 0) return null;
+      return "CNS inválido";
+    }
+  }
+
+  int somaPonderada(String input) {
+    int soma = 0;
+    for (int i = 0; i < 15; i++) {
+      soma += (int.parse(input[i])) * (15 - i);
+    }
+    return soma;
   }
 
   void _mapearVacinado(Map<String, dynamic> json) {
@@ -72,6 +87,7 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
     vacinado['Nascimento'] = json['Data de nascimento'].toDate();
     // vacinado['Dose'] = json['1a dose'];
     vacinado['Grupo'] = json['Grupo'];
+    vacinado['Condicao'] = json['Condicao'];
   }
 
   FutureBuilder _pegarDados(String? cpfCns) {
@@ -84,11 +100,16 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
             } else if (snapshot.connectionState == ConnectionState.done) {
               dynamic json = snapshot.data.data();
               print(json);
+              if (json == null) {
+                vacinado.clear();
+                vacinado[botao ? 'CPF' : 'CNS'] = cpfCns;
+              }
               if (json != null) _mapearVacinado(json);
               vacinado['botao'] = botao;
               print(vacinado);
               if (passar) {
                 SchedulerBinding.instance!.addPostFrameCallback((_) {
+                  apertado = false;
                   passar = false;
                   Navigator.push(
                       context,
@@ -97,7 +118,7 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                               vacinado, widget.dados_vacinacao)));
                 });
               }
-              return Text('aaa');
+              return Icon(Icons.check_circle_outline);
 
               // Chegaram erros
             } else if (snapshot.hasError) {

@@ -10,7 +10,7 @@ import 'package:flutter/scheduler.dart';
 class TelaLogin extends StatefulWidget {
   const TelaLogin(this.dadosRegistro, {Key? key, this.title}) : super(key: key);
   final String? title;
-  final Map<String, dynamic>? dadosRegistro;
+  final Map<String, dynamic> dadosRegistro;
   @override
   _TelaLoginState createState() => _TelaLoginState();
 }
@@ -129,7 +129,12 @@ class _TelaLoginState extends State<TelaLogin> {
                   }
                 },
               ),
-              Text(error),
+              Text(
+                error,
+                style: TextStyle(
+                    color: Colors.red,
+                    fontSize: tamanhoDispositivo.width * .05),
+              ),
               _dadosVacinas(),
               Spacer(),
               //Spacer(),

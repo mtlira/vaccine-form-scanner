@@ -42,7 +42,7 @@ class _TelaVacinaState extends State<TelaVacina> {
               hintText: DateFormat('dd/MM/yyyy')
                   .format(data.add(Duration(days: 28)))), // CORONAVAC: 28 dias
         );
-      else if (vacina == 'ASTRAZENECA/OXFORD/FIOCRUZ')
+      else if (vacina == 'ASTRAZENECA')
         return TextFormField(
           enabled: false,
           decoration: InputDecoration(
@@ -69,23 +69,21 @@ class _TelaVacinaState extends State<TelaVacina> {
     return Container();
   }
 
-  List<String> _lotes(String? vacina){
+  List<String> _lotes(String? vacina) {
     List<String> lotes = [];
     widget.dados_vacinacao.forEach((valor) => {
-      if (valor["Nome"] == vacina) {
-        lotes = List<String>.from(valor["Lotes"] as List)
-      } 
-    });
+          if (valor["Nome"] == vacina)
+            {lotes = List<String>.from(valor["Lotes"] as List)}
+        });
     return lotes;
   }
 
-  List<String> _grupos(){
+  List<String> _grupos() {
     List<String> lotes = [];
     widget.dados_vacinacao.forEach((valor) => {
-      if (valor["Nome"] == "Grupos") {
-        lotes = List<String>.from(valor["Grupos"] as List)
-      } 
-    });
+          if (valor["Nome"] == "Grupos")
+            {lotes = List<String>.from(valor["Grupos"] as List)}
+        });
     return lotes;
   }
 
@@ -162,7 +160,8 @@ class _TelaVacinaState extends State<TelaVacina> {
                         dose['Lote'] = dropdownValueLote;
                       });
                     },
-                    items: _lotes(dose['Vacina']).map<DropdownMenuItem<String>>((String value) {
+                    items: _lotes(dose['Vacina'])
+                        .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -183,7 +182,8 @@ class _TelaVacinaState extends State<TelaVacina> {
                         widget.vacinado['Grupo'] = dropdownValueOcupacao;
                       });
                     },
-                    items: _grupos().map<DropdownMenuItem<String>>((String value) {
+                    items:
+                        _grupos().map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -216,7 +216,8 @@ class _TelaVacinaState extends State<TelaVacina> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TelaVacinador(widget.dados_vacinacao)),
+                                  builder: (context) =>
+                                      TelaVacinador(widget.dados_vacinacao)),
                               (Route<dynamic> route) => false,
                             );
                           }

@@ -1,13 +1,15 @@
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'TelaLogin.dart';
 
 class CadastroAplicador extends StatefulWidget {
-  const CadastroAplicador(this.dadosRegistro, {Key? key, this.title})
+  const CadastroAplicador(this.aplicador, {Key? key, this.title})
       : super(key: key);
   final String? title;
-  final Map<String, dynamic>? dadosRegistro;
+  final Map<String, dynamic> aplicador;
   @override
   _CadastroAplicadorState createState() => _CadastroAplicadorState();
 }
@@ -17,11 +19,13 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   final _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
+  bool _obscureText2 = true;
   String? nome;
   String email = '';
   String password = '';
+  String token = '';
   String error = '';
-
+  bool achou = false;
   Widget _campoInput(String variavelDesejada, Size tamanhoDispositivo) {
     return TextFormField(
       textInputAction: TextInputAction.next,
@@ -52,6 +56,40 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
     return null;
   }
 
+  String? _validarToken(String? token) {
+    dynamic db = FirebaseFirestore.instance
+        .collection('tokens')
+        .get(); //FirebaseDatabase.instance.reference().child("tokens");
+
+    db.then((snapshot) {
+      List data = snapshot.docs;
+      for (var valor in data) {
+        print(valor.data()['token']);
+        if (valor.data()['token'] == token) {
+          achou = true;
+          print(achou);
+          return null;
+        }
+      }
+      print(achou);
+      // data.any((valores) {
+      //   print(valores.data());
+      //   if (token == valores.data()['token']) {
+      //     achou = true;
+      //     // print(achou);
+      //   }
+      //   return achou;
+      // });
+    });
+    if (!achou) {
+      print(achou);
+      print("entrou");
+      return "Token invalido";
+    }
+
+    return achou ? null : "Token invalido";
+  }
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -69,31 +107,41 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Spacer(),
-                  _campoInput('nome', tamanhoDispositivo),
+                  TextFormField(
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(hintText: "Nome"),
+                      validator: (input) =>
+                          input!.isEmpty ? 'Digite o nome' : null,
+                      onChanged: (input) => widget.aplicador['Nome'] = input),
                   Spacer(),
-                  //_campoInput('CPF', tamanhoDispositivo),
-                  //Spa/er(),
-                  //_campoInput('endereço completo', tamanhoDispositivo),
-                  //Spacer(),
-                  //_campoInput('nº do COREN', tamanhoDispositivo),
-                  //Spacer(),
-                  //_campoInput('telefone', tamanhoDispositivo),
-                  //Spacer(),
+                  TextFormField(
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(hintText: "CPF"),
+                      validator: (input) =>
+                          input!.isEmpty ? 'Digite o CPF' : null,
+                      onChanged: (input) => widget.aplicador['CPF'] = input),
+                  Spacer(),
+                  TextFormField(
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(hintText: "Coren"),
+                      validator: (input) =>
+                          input!.isEmpty ? 'Digite o Coren' : null,
+                      onChanged: (input) => widget.aplicador['Coren'] = input),
+                  Spacer(),
 
                   TextFormField(
-                    textInputAction: TextInputAction.next,
-                    validator: (val) => _validarEmail(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
-                    decoration: InputDecoration(
-                      hintText: "Digite seu email",
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .headline5!
-                          .copyWith(fontSize: tamanhoDispositivo.width * .05),
-                      //
-                    ),
-                    onChanged: (val) => setState(() => email = val),
-                  ),
+                      textInputAction: TextInputAction.next,
+                      validator: (val) => _validarEmail(
+                          val), //val!.isEmpty ? 'Digite algo.' : null,
+                      decoration: InputDecoration(
+                        hintText: "Digite seu email",
+
+                        //
+                      ),
+                      onChanged: (val) {
+                        setState(() => email = val);
+                        widget.aplicador['Email'] = val;
+                      }),
 
                   Spacer(),
 
@@ -112,14 +160,32 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                                 print('teste');
                               })),
                       hintText: "Digite sua senha.",
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .headline5!
-                          .copyWith(fontSize: tamanhoDispositivo.width * .05),
+
                       //
                     ),
                     obscureText: _obscureText,
                     onChanged: (val) => setState(() => password = val),
+                  ),
+                  Spacer(),
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    validator: (val) => _validarToken(
+                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(_obscureText2
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () => setState(() {
+                                _obscureText2 = !_obscureText2;
+                                print('teste');
+                              })),
+                      hintText: "Digite o token.",
+
+                      //
+                    ),
+                    obscureText: _obscureText2,
+                    onChanged: (val) => setState(() => token = val),
                   ),
                   Spacer(),
                   ElevatedButton(
@@ -130,12 +196,15 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                                 .registerWithEmailAndPassword(email, password);
                             if (result == null) {
                               setState(() => error = 'email inválido');
-                            } else
+                            } else {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => TelaLogin(null)),
+                                      builder: (context) =>
+                                          TelaLogin(widget.aplicador)),
                                   (Route<dynamic> route) => false);
+                              registroAplicador(widget.aplicador);
+                            }
                           }
                         });
                       },

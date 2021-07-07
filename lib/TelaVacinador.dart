@@ -36,8 +36,7 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                     await auth.signOut();
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => TelaLogin(null)),
+                        MaterialPageRoute(builder: (context) => TelaLogin({})),
                         (Route<dynamic> route) => false);
                   },
                   child: Text('DESLOGAR'),

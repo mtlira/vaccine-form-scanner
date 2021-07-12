@@ -8,6 +8,7 @@ import 'TelaScan.dart';
 class TelaVacinador extends StatefulWidget {
   TelaVacinador(this.dados_vacinacao, {Key? key}) : super(key: key);
   dynamic dados_vacinacao;
+
   @override
   _TelaVacinadorState createState() => _TelaVacinadorState();
 }
@@ -57,11 +58,14 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                 ),
                 // padding: EdgeInsets.all(24),
                 onPressed: () {
+                  print(aplicador);
+                  // widget.dados_vacinacao['Aplicador'] = widget.nomeAplicador;
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              TelaCPFCNS(widget.dados_vacinacao)));
+                          builder: (context) => TelaCPFCNS(
+                                widget.dados_vacinacao,
+                              )));
                 },
               ),
               ElevatedButton(

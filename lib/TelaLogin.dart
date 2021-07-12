@@ -16,6 +16,7 @@ class TelaLogin extends StatefulWidget {
 }
 
 final AuthService auth = AuthService();
+dynamic aplicador;
 
 class _TelaLoginState extends State<TelaLogin> {
   final _formkey = GlobalKey<FormState>();
@@ -28,17 +29,19 @@ class _TelaLoginState extends State<TelaLogin> {
 
   FutureBuilder _dadosVacinas() {
     return FutureBuilder(
-        future: pegarDadosVacinas(),
+        future: Future.wait([pegarDadosVacinas(), pegarDadosAplicador(email)]),
         builder: (context, snapshot) {
           dynamic dados_vacinacao = [];
           if (apertado) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return CircularProgressIndicator();
             if (snapshot.connectionState == ConnectionState.done) {
-              snapshot.data.docs
+              snapshot.data[0].docs
                   .forEach((doc) => {dados_vacinacao.add(doc.data())});
               print(dados_vacinacao);
               print(passar);
+              aplicador = snapshot.data[1].data();
+              print(aplicador);
               if (passar) {
                 passar = false;
                 SchedulerBinding.instance!.addPostFrameCallback((_) {
@@ -116,6 +119,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   if (_formkey.currentState!.validate()) {
                     dynamic result =
                         await auth.signInWithEmailAndPassword(email, password);
+
                     if (result == null) {
                       print("Senha ou email incorreto");
                       setState(() => error = 'Senha ou email incorreto');

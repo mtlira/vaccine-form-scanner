@@ -9,10 +9,12 @@ import 'conexaoFirestore.dart';
 import 'TelaFormularioVacina.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter/scheduler.dart';
+import 'TelaLogin.dart';
 
 class TelaCPFCNS extends StatefulWidget {
   TelaCPFCNS(this.dados_vacinacao, {Key? key}) : super(key: key);
   dynamic dados_vacinacao;
+
   @override
   _TelaCPFCNSState createState() => _TelaCPFCNSState();
 }
@@ -59,7 +61,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
       }
     }
     if (!botao) {
-      return null;
       if (input.length != 15) return "Digite o CNS completo.";
       if (RegExp("[1-2]\\d{10}00[0-1]\\d").hasMatch(input) ||
           RegExp("[7-9]\\d{14}")
@@ -106,6 +107,7 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
               }
               if (json != null) _mapearVacinado(json);
               vacinado['botao'] = botao;
+              vacinado['Aplicador'] = aplicador['nome'];
               print(vacinado);
               if (passar) {
                 SchedulerBinding.instance!.addPostFrameCallback((_) {

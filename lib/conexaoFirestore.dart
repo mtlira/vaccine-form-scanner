@@ -22,6 +22,7 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
       'Grupo': vacinado['Grupo'],
       //'Local de aplicação': vacinado['Local'], // ver se e' necessario escrever isso
       //'Data de aplicação': vacinado['Data'],
+      'Aplicador': vacinado['Aplicador'],
     }, SetOptions(merge: true));
   } catch (e) {
     print("pegou " + e.toString());
@@ -72,7 +73,10 @@ String _primeiraOuSegundaDose(Map<String, dynamic> vacinado) {
 
 Future<dynamic> pegarDadosAplicador(String? email) async {
   try {
-    return FirebaseFirestore.instance.collection('vacinador').doc(email).get();
+    return FirebaseFirestore.instance
+        .collection('aplicadores')
+        .doc(email)
+        .get();
   } catch (e) {
     print("pegou " + e.toString());
   }

@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/TelaFormulario.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:select_form_field/select_form_field.dart';
 import 'conexaoFirestore.dart';
-import 'TelaFormularioVacina.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter/scheduler.dart';
 import 'TelaLogin.dart';
 
 class TelaCPFCNS extends StatefulWidget {
-  TelaCPFCNS(this.dados_vacinacao, {Key? key}) : super(key: key);
-  dynamic dados_vacinacao;
+  TelaCPFCNS(this.dadosVacinacao, {Key? key}) : super(key: key);
+  dynamic dadosVacinacao;
 
   @override
   _TelaCPFCNSState createState() => _TelaCPFCNSState();
@@ -116,8 +110,8 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TelaFormulario(
-                              vacinado, widget.dados_vacinacao)));
+                          builder: (context) =>
+                              TelaFormulario(vacinado, widget.dadosVacinacao)));
                 });
               }
               return Icon(Icons.check_circle_outline);
@@ -168,6 +162,8 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                           value: botao,
                           onChanged: (_) => setState(() {
                                 botao = !botao;
+                                if (vacinado['CNS'].length > 11)
+                                  vacinado['CNS'] = '';
                               })),
                       Text('Usar CPF'),
                       Spacer(),

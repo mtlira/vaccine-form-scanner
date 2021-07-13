@@ -1,5 +1,3 @@
-import 'package:aplicativo/TelaAdmnistrador.dart';
-import 'package:aplicativo/TelaFormularioVacina.dart';
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'TelaCadastroAplicador.dart';
@@ -27,18 +25,37 @@ class _TelaLoginState extends State<TelaLogin> {
   String error = '';
   bool _obscureText = true;
 
+  void _showAlertDialog(String message) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   FutureBuilder _dadosVacinas() {
     return FutureBuilder(
         future: Future.wait([pegarDadosVacinas(), pegarDadosAplicador(email)]),
         builder: (context, snapshot) {
-          dynamic dados_vacinacao = [];
+          dynamic dadosVacinacao = [];
           if (apertado) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return CircularProgressIndicator();
             if (snapshot.connectionState == ConnectionState.done) {
               snapshot.data[0].docs
-                  .forEach((doc) => {dados_vacinacao.add(doc.data())});
-              print(dados_vacinacao);
+                  .forEach((doc) => {dadosVacinacao.add(doc.data())});
+              print(dadosVacinacao);
               print(passar);
               aplicador = snapshot.data[1].data();
               print(aplicador);
@@ -48,7 +65,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TelaVacinador(dados_vacinacao)),
+                          builder: (context) => TelaVacinador(dadosVacinacao)),
                       (Route<dynamic> route) => false);
                 });
               }
@@ -122,7 +139,8 @@ class _TelaLoginState extends State<TelaLogin> {
 
                     if (result == null) {
                       print("Senha ou email incorreto");
-                      setState(() => error = 'Senha ou email incorreto');
+                      setState(() => error = 'Email ou senha incorreto!');
+                      _showAlertDialog(error);
                     } else {
                       setState(() {
                         apertado = true;
@@ -133,12 +151,12 @@ class _TelaLoginState extends State<TelaLogin> {
                   }
                 },
               ),
-              Text(
-                error,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: tamanhoDispositivo.width * .05),
-              ),
+              // Text(
+              //   error,
+              //   style: TextStyle(
+              //       color: Colors.red,
+              //       fontSize: tamanhoDispositivo.width * .05),
+              // ),
               _dadosVacinas(),
               Spacer(),
               //Spacer(),

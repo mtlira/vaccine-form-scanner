@@ -1,7 +1,6 @@
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'TelaLogin.dart';
 
@@ -26,21 +25,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   String token = '';
   String error = '';
   bool achou = false;
-  Widget _campoInput(String variavelDesejada, Size tamanhoDispositivo) {
-    return TextFormField(
-      textInputAction: TextInputAction.next,
-      validator: (val) => val!.isEmpty ? 'Digite seu $variavelDesejada.' : null,
-      decoration: InputDecoration(
-        hintText: "Digite seu $variavelDesejada.",
-        hintStyle: Theme.of(context)
-            .textTheme
-            .headline5!
-            .copyWith(fontSize: tamanhoDispositivo.width * .05),
-      ),
-      onChanged: (val) => setState(
-          () => /*widget.dadosRegistro![variavelDesejada]*/ nome = val),
-    );
-  }
 
   String? _validarEmail(String? email) {
     if (email!.isEmpty) return "Digite um email";

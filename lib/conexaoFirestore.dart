@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
   try {
@@ -56,6 +55,14 @@ Future<dynamic> pegarDadosVacinado(String? cpfCns, bool botao) async {
 Future<dynamic> pegarDadosVacinas() async {
   try {
     return FirebaseFirestore.instance.collection('dados_vacinacao').get();
+  } catch (e) {
+    print("pegou " + e.toString());
+  }
+}
+
+Future<dynamic> pegarTokens() async {
+  try {
+    return FirebaseFirestore.instance.collection('tokens').get();
   } catch (e) {
     print("pegou " + e.toString());
   }

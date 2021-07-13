@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:select_form_field/select_form_field.dart';
-import 'conexaoFirestore.dart';
 import 'TelaFormularioVacina.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class TelaFormulario extends StatefulWidget {
-  TelaFormulario(this.vacinado, this.dados_vacinacao, {Key? key})
+  TelaFormulario(this.vacinado, this.dadosVacinacao, {Key? key})
       : super(key: key);
   Map<String, dynamic> vacinado;
-  dynamic dados_vacinacao;
+  dynamic dadosVacinacao;
   @override
   _TelaFormularioState createState() => _TelaFormularioState();
 }
@@ -208,7 +206,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                                 MaterialPageRoute(
                                     builder: (context) => TelaVacina(
                                         widget.vacinado,
-                                        widget.dados_vacinacao)));
+                                        widget.dadosVacinacao)));
                         });
                       },
                       child: Text('Próximo'))

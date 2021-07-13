@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'TelaCadastroAplicador.dart';
 
 class TelaAdministrador extends StatefulWidget {
   const TelaAdministrador({Key? key}) : super(key: key);
@@ -11,9 +10,6 @@ class TelaAdministrador extends StatefulWidget {
 class _TelaAdministradorState extends State<TelaAdministrador> {
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style =
-        ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-
     return Scaffold(
       body: Center(
         child: Column(

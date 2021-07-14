@@ -162,8 +162,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                           value: botao,
                           onChanged: (_) => setState(() {
                                 botao = !botao;
-                                if (vacinado['CNS'].length > 11)
-                                  vacinado['CNS'] = '';
                               })),
                       Text('Usar CPF'),
                       Spacer(),

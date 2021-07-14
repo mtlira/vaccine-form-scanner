@@ -26,6 +26,40 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   String error = '';
   bool achou = false;
 
+   String? _validarCPF(String? input) {
+    if (input == null) return "Digite o CPF";
+      if (input.length != 11)
+        return "Digite o CPF completo.";
+      else {
+        int soma = 0;
+        for (int i = 0; i < 9; i++) {
+          soma += int.parse(input[i]) * (10 - i);
+        }
+        int digito1;
+        int resto = (soma % 11);
+        if (resto < 2) {
+          digito1 = 0;
+        } else
+          digito1 = 11 - resto;
+        if (digito1 != int.parse(input[9])) return "CPF inválido.";
+
+        int digito2;
+        soma = 0;
+        for (int i = 0; i < 9; i++) {
+          soma += int.parse(input[i]) * (11 - i);
+        }
+        soma += digito1 * 2;
+        resto = (soma % 11);
+        if (resto < 2) {
+          digito2 = 0;
+        } else
+          digito2 = 11 - resto;
+        print(digito2);
+        if (digito2 != int.parse(input[10])) return "CPF inválido.";
+        return null;
+      }
+   }
+
   String? _validarEmail(String? email) {
     if (email!.isEmpty) return "Digite um email";
     if (!RegExp(
@@ -101,8 +135,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   TextFormField(
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(hintText: "CPF"),
-                      validator: (input) =>
-                          input!.isEmpty ? 'Digite o CPF' : null,
+                      validator: (input) => _validarCPF(input),
                       onChanged: (input) => widget.aplicador['CPF'] = input),
                   Spacer(),
                   TextFormField(

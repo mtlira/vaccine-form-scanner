@@ -116,64 +116,6 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }*/
 
-  void corrigirEndereco(int indiceValor) {
-    List palavras = [];
-    List prefixos = [];
-    List posfixos = [];
-    int indicePalavra = -1;
-    List offset = [];
-    bool preEncontrado = false;
-    bool posEncontrado = false;
-    String pre = "";
-    String pos = "";
-    int indicePre = 0; //indices do prefixo no valor
-    int indicePos = 0; // indice do posfixo no valor
-    
-    
-    palavras = ["APARTAMENTO",
-                "AVENIDA",
-                "CONDOMINIO"];
-
-    prefixos = [["APA"],
-                ["AVE"],
-                ["COND","CON D","COMD","CO ND","CO MD", "CDND"]];
-
-    posfixos = [["MENTO","MEMTO","MEMIO","MEN TO","MEM TO"],
-                ["IDA","TDA"],
-                ["MINIO","MTNIO","MTNTO","MI NIO","MT NIO","MT NTO"]];
-
-    offset = [5,
-              3,
-              5
-              ]; 
-    
-
-
-    for (int i = 0; i < palavras.length && !preEncontrado; i++) {
-      posEncontrado = false;
-      for (int j = 0; j < prefixos[i].length; j++) {
-        if (campos[indiceValor].contains(prefixos[i][j])) {
-          pre = prefixos[i][j];
-          preEncontrado = true;
-          indicePalavra = i;
-        }
-      }
-      for (int j = 0; j < posfixos[i].length && !posEncontrado; j++) {
-        if (campos[indiceValor].contains(posfixos[i][j])) {
-          pos = posfixos[i][j];
-          posEncontrado = true;
-        }
-      }
-      if (pre != "" && pos != "") {
-        indicePre = campos[indiceValor].indexOf(pre);
-        indicePos = campos[indiceValor].lastIndexOf(pos) + offset[indicePalavra];
-        campos[indiceValor] = campos[indiceValor].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValor].substring(indicePos);
-      }
-      preEncontrado = false;
-      pre = "";
-      pos = "";
-    }
-  }
 
   corrigirCampo(String tipo, int indiceValor) {
       List palavras = [];
@@ -304,62 +246,6 @@ class _DetailScreenState extends State<DetailScreen> {
       }
 
     }  
-  }
-
-  void corrigirVacina(int indiceValor) {
-    List palavras = [];
-    List prefixos = [];
-    List posfixos = [];
-    int indicePalavra = -1;
-    List offset = [];
-    bool preEncontrado = false;
-    bool posEncontrado = false;
-    String pre = "";
-    String pos = "";
-    int indicePre = 0; //indices do prefixo no valor
-    int indicePos = 0; // indice do posfixo no valor
-    
-    palavras = ["CORONAVAC",
-                "PFIZER",
-                "JANSEN",
-                "ASTRAZENECA"];
-    prefixos = [["COR"],
-                ["P"],
-                ["JAN","UAN","JAM","UAM"],
-                ["AST","ASI"]];
-    posfixos = [["VAC"],
-                ["ZER","ZFR"],
-                ["SEN","SFM","SEM",'SFN'],
-                ["ECA","FCA"]];
-    offset = [3,
-              3,
-              3,
-              3
-              ]; 
-    
-
-
-    for (int i = 0; i < palavras.length && !preEncontrado; i++) {
-      for (int j = 0; j < prefixos[i].length; j++) {
-        if (campos[indiceValor].contains(prefixos[i][j])) {
-          pre = prefixos[i][j];
-          preEncontrado = true;
-          indicePalavra = i;
-        }
-      }
-      for (int j = 0; j < posfixos[i].length && !posEncontrado; j++) {
-        if (campos[indiceValor].contains(posfixos[i][j])) {
-          pos = posfixos[i][j];
-          posEncontrado = true;
-        }
-      }
-      if (pre != "" && pos != "") {
-        indicePre = campos[indiceValor].indexOf(pre);
-        indicePos = campos[indiceValor].lastIndexOf(pos) + offset[indicePalavra];
-        campos[indiceValor] = campos[indiceValor].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValor].substring(indicePos);
-      }
-    }
-
   }
 
   void processarTexto(String texto) { 

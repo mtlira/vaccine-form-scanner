@@ -73,13 +73,13 @@ class _TelaFormularioState extends State<TelaFormulario> {
                         widget.vacinado['Nome da mãe'] = input,
                     initialValue: widget.vacinado['Nome da mãe'],
                   ),
-                  TextFormField(
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(hintText: "Nome social"),
-                    onChanged: (input) =>
-                        widget.vacinado['Nome social'] = input,
-                    initialValue: widget.vacinado['Nome social'],
-                  ),
+                  // TextFormField(
+                  //   textInputAction: TextInputAction.next,
+                  //   decoration: InputDecoration(hintText: "Nome social"),
+                  //   onChanged: (input) =>
+                  //       widget.vacinado['Nome social'] = input,
+                  //   initialValue: widget.vacinado['Nome social'],
+                  // ),
                   TextFormField(
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(hintText: "Email"),

@@ -83,6 +83,8 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
     // vacinado['Dose'] = json['1a dose'];
     vacinado['Grupo'] = json['Grupo'];
     vacinado['Condicao'] = json['Condicao'];
+    vacinado['Nome da mãe'] = json['Nome da mãe'];
+    vacinado['Raça'] = json['Raça'];
   }
 
   FutureBuilder _pegarDados(String? cpfCns) {
@@ -136,18 +138,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
       ),
       body: Stack(
         children: [
-          // Center(
-          //     child: Container(
-          //   width: tamanhoDispositivo.width * .1,
-          //   decoration: BoxDecoration(
-          //     border: Border.all(),
-          //     color: Colors.white,
-          //   ),
-          //   child: FittedBox(
-          //       fit: BoxFit.fitWidth,
-          //       child: _pegarDados(
-          //           vacinado[botao ? 'CPF' : 'CNS'], botao, apertado)),
-          // )),
           Center(
             child: Container(
               width: tamanhoDispositivo.width * .8,
@@ -175,14 +165,10 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(
                                     botao ? 11 : 15),
-                                //(botao ? maskFormatterCPF : maskFormatterCNS)
                               ],
                               decoration: InputDecoration(
                                   hintText: botao ? 'CPF' : 'CNS'),
                               validator: (input) => _validarCPFCNS(input),
-                              /*input!.isEmpty
-                                  ? 'Digite seu ${botao ? 'CPF' : 'CNS'}.'
-                                  : null, //_validarCPFCNS*/
                               onChanged: (input) =>
                                   vacinado[botao ? 'CPF' : 'CNS'] = input,
                               keyboardType: TextInputType.number),

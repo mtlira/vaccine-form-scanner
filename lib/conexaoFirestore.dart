@@ -16,11 +16,9 @@ Future<void> registroVacinado(Map<String, dynamic> vacinado) async {
       'Endereco': vacinado['Endereço'],
       'Data de nascimento': vacinado['Nascimento'],
       '${_primeiraOuSegundaDose(vacinado)}': vacinado['Dose'],
-      // 'Vacina': vacinado['Vacina'],
-      // 'Lote': vacinado['Lote'],
       'Grupo': vacinado['Grupo'],
-      //'Local de aplicação': vacinado['Local'], // ver se e' necessario escrever isso
-      //'Data de aplicação': vacinado['Data'],
+      'Raça': vacinado['Raça'],
+      'Nome da mãe': vacinado['Nome da mãe'],
       'Aplicador': vacinado['Aplicador'],
     }, SetOptions(merge: true));
   } catch (e) {

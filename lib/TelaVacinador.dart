@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'TelaScan.dart';
 import 'dart:async';
 
+
 class TelaVacinador extends StatefulWidget {
   TelaVacinador(this.dadosVacinacao, {Key? key}) : super(key: key);
   dynamic dadosVacinacao;
@@ -93,20 +94,31 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                                 )));
                   },
                 ),
-                ElevatedButton(
-                  // color: Colors.blue,
-                  child: Text(
-                    "Escanear Formulario de vacinação",
-                    style: new TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  // padding: EdgeInsets.all(24),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TelaScan()));
-                  },
-                )
-              ],
-            ),
+                // padding: EdgeInsets.all(24),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TelaFormulario()));
+                },
+              ),
+              ElevatedButton(
+                // color: Colors.blue,
+                child: Text(
+                  "Escanear Formulario de vacinação",
+                  style: new TextStyle(fontWeight: FontWeight.bold),
+                ),
+                // padding: EdgeInsets.all(24),
+                onPressed: () {
+                  Scanner_main();
+                  //print('passei do scanner main');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Scanner()));
+                },
+              )
+            ],
           ),
         ),
       ),

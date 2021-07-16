@@ -5,6 +5,33 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'TelaLogin.dart';
 
+bool terminou = false;
+bool token_existe = false;
+
+bool istoken(String? token){
+  bool achou = false;
+  FirebaseFirestore.instance
+    .collection('tokens')
+    .get()
+    .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+            print(doc['token']);
+            if (doc['token'] == token){
+              achou = true;
+              print("Entrou AQUI");
+              token_existe = true;
+            } else{
+              token_existe = false;
+            }
+            terminou = true;
+        });
+    });
+  print("Valor da funcao istoken");
+  print(achou);
+  return achou;
+}
+
+
 class CadastroAplicador extends StatefulWidget {
   const CadastroAplicador(this.aplicador, {Key? key, this.title})
       : super(key: key);
@@ -25,7 +52,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   String password = '';
   String token = '';
   String error = '';
-  bool achou = false;
   Widget _campoInput(String variavelDesejada, Size tamanhoDispositivo) {
     return TextFormField(
       textInputAction: TextInputAction.next,
@@ -57,41 +83,19 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   }
 
   String? _validarToken(String? token) {
-    dynamic db = FirebaseFirestore.instance
-        .collection('tokens')
-        .get(); //FirebaseDatabase.instance.reference().child("tokens");
-
-    db.then((snapshot) {
-      List data = snapshot.docs;
-      for (var valor in data) {
-        print(valor.data()['token']);
-        if (valor.data()['token'] == token) {
-          achou = true;
-          print(achou);
-          return null;
-        }
-      }
-      print(achou);
-      // data.any((valores) {
-      //   print(valores.data());
-      //   if (token == valores.data()['token']) {
-      //     achou = true;
-      //     // print(achou);
-      //   }
-      //   return achou;
-      // });
-    });
-    if (!achou) {
-      print(achou);
-      print("entrou");
-      return "Token invalido";
+    bool certo;
+    int i;
+    if (!token_existe){
+      return "Token incorreto";
     }
-
-    return achou ? null : "Token invalido";
+    return null;
+    //return achou ? null : "Token invalido";
   }
 
   @override
   Widget build(BuildContext context) {
+
+    _formKey.currentState?.validate();
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(title: Text(widget.title!)),
@@ -169,8 +173,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   Spacer(),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => _validarToken(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    validator: _validarToken, //val!.isEmpty ? 'Digite algo.' : null,
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText2
@@ -190,6 +193,9 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   Spacer(),
                   ElevatedButton(
                       onPressed: () {
+                        istoken(token);
+
+
                         setState(() async {
                           if (_formKey.currentState!.validate()) {
                             dynamic result = await _auth

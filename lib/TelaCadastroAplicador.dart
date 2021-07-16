@@ -6,9 +6,10 @@ import 'TelaLogin.dart';
 import 'package:flutter/services.dart';
 
 class CadastroAplicador extends StatefulWidget {
-  const CadastroAplicador(this.aplicador, {Key? key, this.title})
+  const CadastroAplicador(this.aplicador, this.tokens, {Key? key})
       : super(key: key);
-  final String? title;
+
+  final dynamic tokens;
   final Map<String, dynamic> aplicador;
   @override
   _CadastroAplicadorState createState() => _CadastroAplicadorState();
@@ -76,44 +77,17 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   }
 
   String? _validarToken(String? token) {
-    dynamic db = FirebaseFirestore.instance
-        .collection('tokens')
-        .get(); //FirebaseDatabase.instance.reference().child("tokens");
-
-    db.then((snapshot) {
-      List data = snapshot.docs;
-      for (var valor in data) {
-        print(valor.data()['token']);
-        if (valor.data()['token'] == token) {
-          achou = true;
-          print(achou);
-          return null;
-        }
-      }
-      print(achou);
-      // data.any((valores) {
-      //   print(valores.data());
-      //   if (token == valores.data()['token']) {
-      //     achou = true;
-      //     // print(achou);
-      //   }
-      //   return achou;
-      // });
-    });
-    if (!achou) {
-      print(achou);
-      print("entrou");
-      return "Token invalido";
+    for (var i in widget.tokens) {
+      if (i['token'] == token) return null;
     }
-
-    return achou ? null : "Token invalido";
+    return 'Token inválido';
   }
 
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title!)),
+      appBar: AppBar(title: Text('Página de cadastro do aplicador')),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -139,6 +113,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                       ],
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(hintText: "CPF"),
+                      keyboardType: TextInputType.number,
                       validator: (input) => _validarCPF(input),
                       onChanged: (input) => widget.aplicador['CPF'] = input),
                   Spacer(),

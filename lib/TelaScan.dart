@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'image_detail.dart';
+import 'package:flutter/services.dart';
 
 // Global variable for storing the list of
 // cameras available
 List<CameraDescription> cameras = [];
+bool ativouCamera = false;
 
 Future<void> Scanner_main() async {
   try {
@@ -24,9 +26,9 @@ class Scanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ML Vision',
+      title: 'Tela de Scanear',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: CameraScreen(),
     );
@@ -43,6 +45,8 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
+    print("aqui");
+    print(cameras.isEmpty);
     _controller = CameraController(cameras[0], ResolutionPreset.medium);
     _controller.initialize().then((_) {
       if (!mounted) {
@@ -51,12 +55,13 @@ class _CameraScreenState extends State<CameraScreen> {
       setState(() {});
     });
   }
+
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-  Future<String?> _takePicture() async {
 
+  Future<String?> _takePicture() async {
     // Checking whether the controller is initialized
     if (!_controller.value.isInitialized) {
       print("Controller is not initialized");
@@ -98,11 +103,16 @@ class _CameraScreenState extends State<CameraScreen> {
 
     return imagePath;
   }
+
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       appBar: AppBar(
-        title: Text('ML Vision'),
+        title: Text('Tela de Scanear'),
       ),
       body: _controller.value.isInitialized
           ? Stack(

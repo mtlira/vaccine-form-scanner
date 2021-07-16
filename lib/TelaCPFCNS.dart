@@ -95,28 +95,47 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.connectionState == ConnectionState.done) {
-              dynamic json = snapshot.data.data();
-              print(json);
-              if (json == null) {
-                vacinado.clear();
+              if (snapshot.hasError) {
+                print(snapshot.error);
                 vacinado[botao ? 'CPF' : 'CNS'] = cpfCns;
+                vacinado['botao'] = botao;
+                vacinado['Aplicador'] = aplicador['nome'];
+                if (passar) {
+                  SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    apertado = false;
+                    passar = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaFormulario(
+                                vacinado, widget.dadosVacinacao)));
+                  });
+                }
+                return Container();
+              } else {
+                dynamic json = snapshot.data.data();
+                print(json);
+                if (json == null) {
+                  vacinado.clear();
+                  vacinado[botao ? 'CPF' : 'CNS'] = cpfCns;
+                }
+                if (json != null) _mapearVacinado(json);
+                vacinado['botao'] = botao;
+                vacinado['Aplicador'] = aplicador['nome'];
+                print(vacinado);
+                if (passar) {
+                  SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    apertado = false;
+                    passar = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaFormulario(
+                                vacinado, widget.dadosVacinacao)));
+                  });
+                }
+                return Icon(Icons.check_circle_outline);
               }
-              if (json != null) _mapearVacinado(json);
-              vacinado['botao'] = botao;
-              vacinado['Aplicador'] = aplicador['nome'];
-              print(vacinado);
-              if (passar) {
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
-                  apertado = false;
-                  passar = false;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TelaFormulario(vacinado, widget.dadosVacinacao)));
-                });
-              }
-              return Icon(Icons.check_circle_outline);
 
               // Chegaram erros
             } else if (snapshot.hasError) {

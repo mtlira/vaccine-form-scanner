@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'TelaScan.dart';
 import 'dart:async';
 
-
 class TelaVacinador extends StatefulWidget {
   TelaVacinador(this.dadosVacinacao, {Key? key}) : super(key: key);
   dynamic dadosVacinacao;
@@ -41,87 +40,88 @@ class _TelaVacinadorState extends State<TelaVacinador> {
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-            title: Text(
-              "Tela do Vacinador",
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Colors.green,
-            actions: <Widget>[
-              Padding(
-                  padding:
-                      EdgeInsets.only(right: tamanhoDispositivo.width * 0.05),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        textStyle: TextStyle(
-                            fontSize: tamanhoDispositivo.width * .04)),
-                    onPressed: () async {
-                      await auth.signOut();
-                      Navigator.pushAndRemoveUntil(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          appBar: AppBar(
+              title: Text(
+                "Tela do Vacinador",
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Colors.green,
+              actions: <Widget>[
+                Padding(
+                    padding:
+                        EdgeInsets.only(right: tamanhoDispositivo.width * 0.05),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          primary: Colors.white,
+                          textStyle: TextStyle(
+                              fontSize: tamanhoDispositivo.width * .04)),
+                      onPressed: () async {
+                        await auth.signOut();
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TelaLogin({})),
+                            (Route<dynamic> route) => false);
+                      },
+                      child: Text('DESLOGAR'),
+                    ))
+              ]),
+          body: Center(
+            child: Container(
+              // padding: EdgeInsets.all(48),
+              // color: Colors.lightGreen[200],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    // color: Colors.blue,
+                    child: Text(
+                      "Digitar Formulario de vacinação",
+                      style: new TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    // padding: EdgeInsets.all(24),
+                    onPressed: () {
+                      print(aplicador);
+                      // widget.dadosVacinacao['Aplicador'] = widget.nomeAplicador;
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => TelaLogin({})),
-                          (Route<dynamic> route) => false);
+                              builder: (context) => TelaCPFCNS(
+                                    widget.dadosVacinacao,
+                                  )));
                     },
-                    child: Text('DESLOGAR'),
-                  ))
-            ]),
-        body: Center(
-          child: Container(
-            // padding: EdgeInsets.all(48),
-            // color: Colors.lightGreen[200],
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  // color: Colors.blue,
-                  child: Text(
-                    "Digitar Formulario de vacinação",
-                    style: new TextStyle(fontWeight: FontWeight.bold),
                   ),
                   // padding: EdgeInsets.all(24),
-                  onPressed: () {
-                    print(aplicador);
-                    // widget.dadosVacinacao['Aplicador'] = widget.nomeAplicador;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TelaCPFCNS(
-                                  widget.dadosVacinacao,
-                                )));
-                  },
-                ),
-                // padding: EdgeInsets.all(24),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TelaFormulario()));
-                },
+
+                  ElevatedButton(
+                    // color: Colors.blue,
+                    child: Text(
+                      "Escanear Formulario de vacinação",
+                      style: new TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    // padding: EdgeInsets.all(24),
+                    onPressed: () async {
+                      Scanner_main();
+                      //print('passei do scanner main');
+                      if (ativouCamera)
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Scanner()));
+                      else
+                        Future.delayed(const Duration(milliseconds: 2000), () {
+                          ativouCamera = true;
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Scanner()));
+                        });
+                    },
+                  )
+                ],
               ),
-              ElevatedButton(
-                // color: Colors.blue,
-                child: Text(
-                  "Escanear Formulario de vacinação",
-                  style: new TextStyle(fontWeight: FontWeight.bold),
-                ),
-                // padding: EdgeInsets.all(24),
-                onPressed: () {
-                  Scanner_main();
-                  //print('passei do scanner main');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Scanner()));
-                },
-              )
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

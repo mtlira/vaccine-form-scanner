@@ -20,6 +20,7 @@ class _TelaVacinaState extends State<TelaVacina> {
   bool botao = false;
   String? dropdownValueVacina, dropdownValueOcupacao, dropdownValueLote;
   Map<String, dynamic> dose = {};
+  Map<String, dynamic> outro = {};
 
   Widget _dataAprazamento(vacina, data, dose) {
     if (dose == '1') {
@@ -71,16 +72,36 @@ class _TelaVacinaState extends State<TelaVacina> {
           if (valor["Nome"] == vacina)
             {lotes = List<String>.from(valor["Lotes"] as List)}
         });
+    lotes.add("Outro");
     return lotes;
   }
 
   List<String> _grupos() {
-    List<String> lotes = [];
+    List<String> grupos = [];
     widget.dados_vacinacao.forEach((valor) => {
           if (valor["Nome"] == "Grupos")
-            {lotes = List<String>.from(valor["Grupos"] as List)}
+            {grupos = List<String>.from(valor["Grupos"] as List)}
         });
-    return lotes;
+    grupos.add("Outro");
+    return grupos;
+  }
+
+  Widget _campoLote(String? opcao) {
+    if (opcao == "Outro")
+      return TextFormField(
+          decoration: InputDecoration(hintText: "Lote"),
+          validator: (input) => input!.isEmpty ? 'Digite o lote.' : null,
+          onChanged: (input) => outro['Lote'] = input);
+    return Container();
+  }
+
+  Widget _campoGrupo(String? opcao) {
+    if (opcao == "Outro")
+      return TextFormField(
+          decoration: InputDecoration(hintText: "Grupo"),
+          validator: (input) => input!.isEmpty ? 'Digite o grupo.' : null,
+          onChanged: (input) => outro['Grupo'] = input);
+    return Container();
   }
 
   @override
@@ -164,6 +185,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                       );
                     }).toList(),
                   ),
+                  _campoLote(dose['Lote']),
                   DropdownButtonFormField<String>(
                     validator: (value) => value == null
                         ? 'Preencha o grupo de atendimento.'
@@ -186,6 +208,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                       );
                     }).toList(),
                   ),
+                  _campoGrupo(widget.vacinado['Grupo']),
                   DateTimeField(
                     initialValue: DateTime.now(),
                     decoration: InputDecoration(hintText: "Data de aplicação"),
@@ -207,6 +230,10 @@ class _TelaVacinaState extends State<TelaVacina> {
                         setState(() {
                           if (_formKey.currentState!.validate()) {
                             dose['Data'] = widget.vacinado['Data'];
+                            if (dose['Lote'] == 'Outro')
+                              dose['Lote'] = outro['Lote'];
+                            if (widget.vacinado['Grupo'] == 'Outro')
+                              widget.vacinado['Grupo'] = outro['Grupo'];
                             widget.vacinado['Dose'] = dose;
                             registroVacinado(widget.vacinado);
                             Navigator.pushAndRemoveUntil(

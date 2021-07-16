@@ -179,6 +179,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                     height: tamanhoDispositivo.height * .05,
                   ),
                   ToggleSwitch(
+                    // TODO: Ajustar tamanho do botão
                     totalSwitches: 3,
                     labels: ['Gestante', 'N.A.', 'Puérpera'],
                     initialLabelIndex: _gestantePuerpera(),

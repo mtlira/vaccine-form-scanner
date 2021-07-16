@@ -104,6 +104,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   key: _formkey,
                   child: Column(children: [
                     TextFormField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: "Email"),
                         validator: (val) =>
                             val!.isEmpty ? 'Digite o email.' : null,

@@ -36,6 +36,17 @@ class _TelaVacinadorState extends State<TelaVacinador> {
         false;
   }
 
+  FutureBuilder _ativarCamera() {
+    return FutureBuilder(
+        future: Scanner_main(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return CircularProgressIndicator();
+          else
+            return Container();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -65,7 +76,7 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                                 builder: (context) => TelaLogin({})),
                             (Route<dynamic> route) => false);
                       },
-                      child: Text('DESLOGAR'),
+                      child: Text('DESLOGAR'), // TODO: Colocar o tamanho bom
                     ))
               ]),
           body: Center(
@@ -103,21 +114,24 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                     ),
                     // padding: EdgeInsets.all(24),
                     onPressed: () async {
-                      Scanner_main();
+                      print('apertou');
+
+                      // Scanner_main();
                       //print('passei do scanner main');
-                      if (ativouCamera)
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Scanner()));
-                      else
-                        Future.delayed(const Duration(milliseconds: 2000), () {
-                          ativouCamera = true;
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Scanner()));
-                        });
+                      // if (ativouCamera)
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Scanner()));
+                      // else
+                      //   Future.delayed(const Duration(milliseconds: 2000), () {
+                      //     ativouCamera = true;
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => Scanner()));
+                      //   });
                     },
-                  )
+                  ),
+                  _ativarCamera()
                 ],
               ),
             ),

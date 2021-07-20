@@ -95,13 +95,7 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                   },
                 ),
                 // padding: EdgeInsets.all(24),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TelaFormulario()));
-                },
-              ),
+                
               ElevatedButton(
                 // color: Colors.blue,
                 child: Text(
@@ -122,6 +116,6 @@ class _TelaVacinadorState extends State<TelaVacinador> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

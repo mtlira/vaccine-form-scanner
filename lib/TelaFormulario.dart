@@ -25,13 +25,15 @@ class _TelaFormularioState extends State<TelaFormulario> {
   var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
 
   int _gestantePuerpera() {
-    if (widget.vacinado['Condicao'] == 'Gestante')
+    print("vacinado[condicao] = _${widget.vacinado['Condicao']}_ e vacinado['Gestante'] = _${widget.vacinado['Gestante']}_");
+    if (widget.vacinado['Condicao'] == 'Gestante' || widget.vacinado['Gestante'] == "S")
       return 0;
-    else if (widget.vacinado['Condicao'] == 'N.A.')
+    else if (widget.vacinado['Condicao'] == 'N.A.' || (widget.vacinado['Gestante'] == "N" && widget.vacinado['Puérpera'] == "N"))
       return 1;
-    else if (widget.vacinado['Condicao'] == 'Puérpera') return 2;
+    else if (widget.vacinado['Condicao'] == 'Puérpera' || widget.vacinado['Puérpera'] == "S") return 2;
     return 1;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +130,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                             initialDate: currentValue ?? DateTime.now(),
                             lastDate: DateTime(2022));
                       },
-                      initialValue: widget.vacinado['Nascimento']),
+                      initialValue: widget.vacinado['Nascimento']
+                    ),
                   DropdownButtonFormField<String>(
                     validator: (value) =>
                         value == null ? 'Preencha o sexo.' : null,

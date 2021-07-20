@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
 import 'dart:convert';
+import 'TelaFormulario.dart';
+import 'package:intl/intl.dart';
 
 class DetailScreen extends StatefulWidget {
   final String imagePath;
@@ -19,19 +21,20 @@ class _DetailScreenState extends State<DetailScreen> {
   final String path;
 
   Size? _imageSize;
+  dynamic dadosVacinacao;
   String recognizedText = "Loading ...";
   String splitter = "XX";
   List charDesconfiaveis = ['J','I','T','L','Í','Ï'];
   List campos = []; // recebe campos ainda não tratados corretamente
   //List camposFormulario = []; // recebe valores nos campos corretos
-  var camposFormulario = new Map();
+  Map<String, dynamic> camposFormulario = {};
   List redundNome = ["NOME","0ME","WOME","MOME"];
   List redundNasc = ["NASCIMEN","NASCTMEN","NASCLMEN"];
   List redundSexo = ["SEXO","SEX0"];
-  List redundTel = ["TELEF","IELEF","IEIEF"];
+  List redundTel = ["TELE","IELEF","IEIEF"];
   List redundCPF = ["CPF"];
-  List redundNomeMae = ["DA MÃE", "DA MAE","DA MÂE", "DAMÃE", "DAMAE","DA NÃE", "DA NAE", "BA MÃE"];
-  List redundRaca = ["RAÇA", "RACA"];
+  List redundNomeMae = ["MÃE","MĀE","MÄE", "MAE","MÂE","MAE","NÃE", "DA NAE"];
+  List redundRaca = ["RAÇA", "RACA","RASA","RAGA"];
   List redundGest = ["GESTA","GE5TA","GESIA","GES TA","GE5IA","6ES","6E5"];
   List redundPuer = ["PUER","PUÉR","PUÊR"];
   List redundEmail = ["EMAIL","EM4IL","EMATL","EMAII","EMATT","FM"];
@@ -39,7 +42,7 @@ class _DetailScreenState extends State<DetailScreen> {
   List redundVac = ["VACINA","NACINA","VACTNA","VACLNA","NACTNA","VAC1NA","VACIWA"];
   List redundApl = ["APLICA","APLTCA","APLLCA","APIICA","APTTCA"];
   List redundLote = ["LOTE","L0TE","LOIE","L0IE","IOTE","I0TE","IOIE","I0IE"];
-  List redundDose = ["DOSE","D0SE","BOSE","B0SE","DOSF","D05E","D0SF"];
+  List redundDose = ["DOSE","DOS E","DO SE","D0SE","BOSE","B0SE","DOSF","D05E","D0SF"];
   //List nomesMasc = [];
   //List nomesFem = [];
 
@@ -117,7 +120,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }*/
 
 
-  corrigirCampo(String tipo, int indiceValor) {
+  corrigirCampo(String tipo, int indiceValorCampo) {
       List palavras = [];
       List prefixos = [];
       List posfixos = [];
@@ -129,7 +132,81 @@ class _DetailScreenState extends State<DetailScreen> {
       String pos = "";
       int indicePre = 0; //indices do prefixo no valor
       int indicePos = 0; // indice do posfixo no valor
-      
+      List dataStr = []; //usado para formatar campos de data
+      List dataInt = [0,0,0];
+      bool dataInvalida = false;
+      String dataCorrigida;
+      var dataFinal;
+      //remocao de whitespaces nas extremidades
+      campos[indiceValorCampo] = campos[indiceValorCampo].trim();
+    
+      // correcoes de possiveis erros de leitura
+      if (tipo == "NOME" || tipo == "NOME DA MÃE" || tipo == "RAÇA" || tipo == "VACINA") {
+        trocar(indiceValorCampo, "0", "O");
+        trocar(indiceValorCampo, "6", "G");
+        //trocar(indiceValorCampo, "4", "H");
+        trocar(indiceValorCampo, "4", "F");
+        trocar(indiceValorCampo, "1", "I");
+        trocar(indiceValorCampo, "2", "Z");
+        trocar(indiceValorCampo, "5", "S");
+
+      }
+      if (tipo == "NASCIMENTO" || tipo == "TELEFONE" || tipo == "CPF" || tipo == "APLICAÇÃO") {
+        trocar(indiceValorCampo, "O", "0");
+        trocar(indiceValorCampo, "G", "6");
+        trocar(indiceValorCampo, "H", "4");
+        trocar(indiceValorCampo, "F", "4");
+        trocar(indiceValorCampo, "I", "1");
+        trocar(indiceValorCampo, "%", "8");
+        trocar(indiceValorCampo, "Z", "2");
+        trocar(indiceValorCampo, "S", "5");
+      }
+
+      if (tipo == "NASCIMENTO" || tipo == "APLICAÇÃO") {
+        dataStr = campos[indiceValorCampo].split('/');
+        try {
+          for (int i = 0; i < dataStr.length; i++) {
+            dataStr[i] = dataStr[i].trim();
+            //print('$i  _${dataStr[i]}_');
+            dataInt[i] = int.parse(dataStr[i]);
+          }
+        } catch (e) {
+          print('erro em data');
+          dataInvalida = true;
+        }
+        if (!dataInvalida) {
+          if ((dataInt[0] > 31 || dataInt[0] <= 0) ||
+              (dataInt[1] > 12 || dataInt[1] <= 0) ||
+              (dataInt[2] < 1900))
+            dataInvalida = true;
+        }
+        if (dataInvalida) campos[indiceValorCampo] = "invalida";
+        else campos[indiceValorCampo] = dataStr[0] + '/' + dataStr[1] + '/' + dataStr[2];
+      }
+
+      if (tipo == "DOSE") {
+        if (campos[indiceValorCampo].contains("Z") || campos[indiceValorCampo].contains("2")) campos[indiceValorCampo] = "2";
+        if (campos[indiceValorCampo].contains("7") || campos[indiceValorCampo].contains("T") || campos[indiceValorCampo].contains("L") || campos[indiceValorCampo].contains("I"))
+          campos[indiceValorCampo] == "1";
+      }
+
+      if (tipo == "SEXO") {
+        if (campos[indiceValorCampo].contains("F") || campos[indiceValorCampo] == "E" || campos[indiceValorCampo] == "4") {
+          campos[indiceValorCampo] = "Feminino";
+        }
+        else if (campos[indiceValorCampo].contains("M") || campos[indiceValorCampo] == "N") {
+          campos[indiceValorCampo] = "Masculino";
+        }
+        else campos[indiceValorCampo] = "Ignorado";
+      }
+
+      if (tipo == "GESTANTE" || tipo == "PUÉRPERA") {
+        trocar(indiceValorCampo, "5", "S");
+        trocar(indiceValorCampo, "M", "N");
+        if (campos[indiceValorCampo].contains("S")) campos[indiceValorCampo] = "S";
+        if (campos[indiceValorCampo].contains("N")) campos[indiceValorCampo] = "N";
+      }
+
     if (tipo == "ENDEREÇO") {
       palavras = ["APARTAMENTO",
                   "AVENIDA",
@@ -151,22 +228,22 @@ class _DetailScreenState extends State<DetailScreen> {
       for (int i = 0; i < palavras.length && !preEncontrado; i++) {
         posEncontrado = false;
         for (int j = 0; j < prefixos[i].length; j++) {
-          if (campos[indiceValor].contains(prefixos[i][j])) {
+          if (campos[indiceValorCampo].contains(prefixos[i][j])) {
             pre = prefixos[i][j];
             preEncontrado = true;
             indicePalavra = i;
           }
         }
         for (int j = 0; j < posfixos[i].length && !posEncontrado; j++) {
-          if (campos[indiceValor].contains(posfixos[i][j])) {
+          if (campos[indiceValorCampo].contains(posfixos[i][j])) {
             pos = posfixos[i][j];
             posEncontrado = true;
           }
         }
         if (pre != "" && pos != "") {
-          indicePre = campos[indiceValor].indexOf(pre);
-          indicePos = campos[indiceValor].lastIndexOf(pos) + offset[indicePalavra];
-          campos[indiceValor] = campos[indiceValor].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValor].substring(indicePos);
+          indicePre = campos[indiceValorCampo].indexOf(pre);
+          indicePos = campos[indiceValorCampo].lastIndexOf(pos) + offset[indicePalavra];
+          campos[indiceValorCampo] = campos[indiceValorCampo].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValorCampo].substring(indicePos);
         }
         preEncontrado = false;
         pre = "";
@@ -196,12 +273,12 @@ class _DetailScreenState extends State<DetailScreen> {
       }
 
       if (tipo == "RAÇA") {
-        palavras = ["BRANCA",
-                    "PARDA",
-                    "NEGRA",
-                    "AMARELA",
-                    "INDÍGENA",
-                    "OUTRO"];
+        palavras = ["Branca",
+                    "Parda",
+                    "Negra",
+                    "Amarela",
+                    "Indígena",
+                    "Não informada"];
         prefixos = [["BRA"],
                     ["PAR"],
                     ["NEG"],
@@ -213,7 +290,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ["DA","DO"],
                     ["RA","RO"],
                     ["ELA","ELO","EIA","EIO"],
-                    ["ENA","EMA",],
+                    ["ENA","EMA","EWA"],
                     ["TRO","TRA","IRO","IRA"]];
         
         offset = [3,
@@ -226,23 +303,24 @@ class _DetailScreenState extends State<DetailScreen> {
 
       for (int i = 0; i < palavras.length && !preEncontrado; i++) {
         for (int j = 0; j < prefixos[i].length; j++) {
-          if (campos[indiceValor].contains(prefixos[i][j])) {
+          if (campos[indiceValorCampo].contains(prefixos[i][j])) {
             pre = prefixos[i][j];
             preEncontrado = true;
             indicePalavra = i;
           }
         }
         for (int j = 0; j < posfixos[i].length && !posEncontrado; j++) {
-          if (campos[indiceValor].contains(posfixos[i][j])) {
+          if (campos[indiceValorCampo].contains(posfixos[i][j])) {
             pos = posfixos[i][j];
             posEncontrado = true;
           }
         }
         if (pre != "" && pos != "") {
-          indicePre = campos[indiceValor].indexOf(pre);
-          indicePos = campos[indiceValor].lastIndexOf(pos) + offset[indicePalavra];
-          campos[indiceValor] = campos[indiceValor].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValor].substring(indicePos);
+          indicePre = campos[indiceValorCampo].indexOf(pre);
+          indicePos = campos[indiceValorCampo].lastIndexOf(pos) + offset[indicePalavra];
+          campos[indiceValorCampo] = campos[indiceValorCampo].substring(0,indicePre) + palavras[indicePalavra] + campos[indiceValorCampo].substring(indicePos);
         }
+        else campos[indiceValorCampo] = palavras[palavras.length-1];
       }
 
     }  
@@ -306,66 +384,20 @@ class _DetailScreenState extends State<DetailScreen> {
         }
       }
     }
-
-    // correcoes de possiveis erros
-    if (tipo == "NOME" || tipo == "NOME DA MÃE" || tipo == "RAÇA" || tipo == "VACINA") {
-      trocar(indiceValorCampo, "0", "O");
-      trocar(indiceValorCampo, "6", "G");
-      //trocar(indiceValorCampo, "4", "H");
-      trocar(indiceValorCampo, "4", "F");
-      trocar(indiceValorCampo, "1", "I");
-      trocar(indiceValorCampo, "2", "Z");
-      trocar(indiceValorCampo, "5", "S");
-
-    }
-    if (tipo == "NASCIMENTO" || tipo == "TELEFONE" || tipo == "CPF" || tipo == "APLICAÇÃO") {
-      trocar(indiceValorCampo, "O", "0");
-      trocar(indiceValorCampo, "G", "6");
-      trocar(indiceValorCampo, "H", "4");
-      trocar(indiceValorCampo, "F", "4");
-      trocar(indiceValorCampo, "I", "1");
-      trocar(indiceValorCampo, "%", "8");
-      trocar(indiceValorCampo, "Z", "2");
-      trocar(indiceValorCampo, "S", "5");
-      }
-
-    if (tipo == "DOSE") {
-      if (campos[indiceValorCampo].contains("Z") || campos[indiceValorCampo].contains("2")) campos[indiceValorCampo] = "2";
-      if (campos[indiceValorCampo].contains("7") || campos[indiceValorCampo].contains("T") || campos[indiceValorCampo].contains("L") || campos[indiceValorCampo].contains("I"))
-        campos[indiceValorCampo] == "1";
-    }
-
-    if (tipo == "SEXO") {
-      if (campos[indiceValorCampo] == "E" || campos[indiceValorCampo] == "4") {
-        campos[indiceValorCampo] = "F";
-      }
-      else if (campos[indiceValorCampo] == "N") {
-        campos[indiceValorCampo] = "M";
-      }
-      sexo = campos[indiceValorCampo];
-    }
-
-    if (tipo == "GESTANTE" || tipo == "PUÉRPERA") {
-      trocar(indiceValorCampo, "5", "S");
-      trocar(indiceValorCampo, "M", "N");
-      if (campos[indiceValorCampo].contains("S")) campos[indiceValorCampo] = "S";
-      if (campos[indiceValorCampo].contains("N")) campos[indiceValorCampo] = "N";
-    }
-
-    /*if (tipo == "ENDEREÇO") {
-      corrigirEndereco(indiceValorCampo);
-    }
-    if (tipo == "VACINA") {
-      corrigirVacina(indiceValorCampo);
-    }*/
-
+    
     corrigirCampo(tipo, indiceValorCampo);
   
 
     if (campoEncontrado) {
       //campoAjustado = [tipo,campos[indiceValorCampo].trim()]; (quando a saida era em lista)
       //camposFormulario.add(campoAjustado);
-      camposFormulario[tipo] = campos[indiceValorCampo].trim();
+      tipo = tipo[0] + tipo.substring(1).toLowerCase();
+      //camposFormulario[tipo] = campos[indiceValorCampo];
+      if (tipo == "Nascimento" || tipo == "Aplicação") 
+        camposFormulario[tipo] = DateFormat('dd/MM/yyyy').parse(campos[indiceValorCampo].trim());
+      else 
+        camposFormulario[tipo] = campos[indiceValorCampo];
+
     }
   }
 
@@ -442,8 +474,20 @@ class _DetailScreenState extends State<DetailScreen> {
   void initState() {
     _initializeVision();
     //processedText = recognizedText.split('XX');
-    processarTexto(recognizedText);
-    //extrairNomes();
+    processarTexto(recognizedText);              
+    //camposFormulario['Data'] = DateTime.now();
+    camposFormulario['botao'] = true;
+    //print('a_${camposFormulario['Nascimento']}_');
+    //camposFormulario['Nascimento'] = DateFormat('dd/MM/yyyy').parse(camposFormulario['Nascimento']);
+    /*Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TelaFormulario(
+          camposFormulario,
+          dadosVacinacao
+        )
+      ),
+    );*/
     super.initState();
   }
 
@@ -463,8 +507,27 @@ class _DetailScreenState extends State<DetailScreen> {
           padding: EdgeInsets.all(32),
           child: Column (
             children: [
-              Text("Processando ficha..."),
-              Text(recognizedText),
+              Text("Ficha processada"),
+              ElevatedButton(
+                // color: Colors.blue,
+                child: Text(
+                  "Carregar ficha",
+                  style: new TextStyle(fontWeight: FontWeight.bold),
+                ),
+                // padding: EdgeInsets.all(24),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TelaFormulario(
+                        camposFormulario,
+                        dadosVacinacao
+                      )
+                    ),
+                  );
+                },
+              )
+              //Text(recognizedText),
             ],
           )
         )

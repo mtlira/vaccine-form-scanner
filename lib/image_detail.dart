@@ -245,8 +245,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     if (tipo == "DOSE") {
-      if (campos[indiceValorCampo].contains("Z") ||
-          campos[indiceValorCampo].contains("2"))
+      if (campos[indiceValorCampo].contains("Z") || campos[indiceValorCampo].contains("2"))
         campos[indiceValorCampo] = "2";
       if (campos[indiceValorCampo].contains("7") ||
           campos[indiceValorCampo].contains("T") ||
@@ -264,7 +263,7 @@ class _DetailScreenState extends State<DetailScreen> {
           campos[indiceValorCampo] == "N") {
         campos[indiceValorCampo] = "Masculino";
       } else
-        campos[indiceValorCampo] = "Ignorado";
+          campos[indiceValorCampo] = "Ignorado";
     }
 
     if (tipo == "GESTANTE" || tipo == "PUÉRPERA") {
@@ -321,7 +320,9 @@ class _DetailScreenState extends State<DetailScreen> {
         pre = "";
         pos = "";
       }
-    } else {
+    } 
+    
+    else {
       if (tipo == "VACINA") {
         palavras = ["CORONAVAC", "PFIZER", "JANSSEN", "ASTRAZENECA"];
         prefixos = [
@@ -346,7 +347,6 @@ class _DetailScreenState extends State<DetailScreen> {
           "Negra",
           "Amarela",
           "Indígena",
-          "Não informada"
         ];
         prefixos = [
           ["BRA"],
@@ -354,7 +354,6 @@ class _DetailScreenState extends State<DetailScreen> {
           ["NEG"],
           ["AMA", "ANA"],
           ["IND", "TND", "TMD", "IMD"],
-          ["OU", "OJ"]
         ];
 
         posfixos = [
@@ -363,7 +362,6 @@ class _DetailScreenState extends State<DetailScreen> {
           ["RA", "RO"],
           ["ELA", "ELO", "EIA", "EIO"],
           ["ENA", "EMA", "EWA"],
-          ["TRO", "TRA", "IRO", "IRA"]
         ];
 
         offset = [
@@ -372,14 +370,15 @@ class _DetailScreenState extends State<DetailScreen> {
           2,
           3,
           3,
-          3,
         ];
       }
 
       for (int i = 0; i < palavras.length && !preEncontrado; i++) {
         for (int j = 0; j < prefixos[i].length; j++) {
+          print('flag2 ${campos[indiceValorCampo]}, ${prefixos[i][j]}');
           if (campos[indiceValorCampo].contains(prefixos[i][j])) {
             pre = prefixos[i][j];
+            //print('flag1 pre = $pre');
             preEncontrado = true;
             indicePalavra = i;
           }
@@ -398,8 +397,12 @@ class _DetailScreenState extends State<DetailScreen> {
               campos[indiceValorCampo].substring(0, indicePre) +
                   palavras[indicePalavra] +
                   campos[indiceValorCampo].substring(indicePos);
-        } else
-          campos[indiceValorCampo] = palavras[palavras.length - 1];
+        }
+      }
+      if (!preEncontrado || !posEncontrado) {
+        print('$preEncontrado, $posEncontrado'); 
+        if (tipo == "RAÇA") campos[indiceValorCampo] = "Não informada";
+        if (tipo == "VACINA") campos[indiceValorCampo] = "Outra";
       }
     }
   }

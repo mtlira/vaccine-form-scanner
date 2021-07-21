@@ -81,10 +81,11 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
     vacinado['Endereço'] = json['Endereco'];
     vacinado['Nascimento'] = json['Data de nascimento'].toDate();
     // vacinado['Dose'] = json['1a dose'];
-    vacinado['Grupo'] = json['Grupo'];
+    //vacinado['Grupo'] = json['Grupo'];
     vacinado['Condicao'] = json['Condicao'];
     vacinado['Nome da mãe'] = json['Nome da mãe'];
     vacinado['Raça'] = json['Raça'];
+    vacinado['numeroDose'] = '2';
   }
 
   FutureBuilder _pegarDados(String? cpfCns) {

@@ -25,11 +25,17 @@ class _TelaFormularioState extends State<TelaFormulario> {
   var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
 
   int _gestantePuerpera() {
-    if (widget.vacinado['Condicao'] == 'Gestante')
+    print(
+        "vacinado[condicao] = _${widget.vacinado['Condicao']}_ e vacinado['Gestante'] = _${widget.vacinado['Gestante']}_");
+    if (widget.vacinado['Condicao'] == 'Gestante' ||
+        widget.vacinado['Gestante'] == "S")
       return 0;
-    else if (widget.vacinado['Condicao'] == 'N.A.')
+    else if (widget.vacinado['Condicao'] == 'N.A.' ||
+        (widget.vacinado['Gestante'] == "N" &&
+            widget.vacinado['Puérpera'] == "N"))
       return 1;
-    else if (widget.vacinado['Condicao'] == 'Puérpera') return 2;
+    else if (widget.vacinado['Condicao'] == 'Puérpera' ||
+        widget.vacinado['Puérpera'] == "S") return 2;
     return 1;
   }
 
@@ -190,7 +196,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                               ? widget.vacinado['Condicao'] = 'N.A.'
                               : (index == 2)
                                   ? widget.vacinado['Condicao'] = 'Puérpera'
-                                  : widget.vacinado['Condicao'] = null;
+                                  : widget.vacinado['Condicao'] = 'N.A.';
                     },
                   ),
                   SizedBox(
@@ -198,7 +204,10 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   ElevatedButton(
                       onPressed: () async {
-                        widget.vacinado['numeroDose'] = '1';
+                        if (widget.vacinado['numeroDose'] == null)
+                          widget.vacinado['numeroDose'] = '1';
+                        if (widget.vacinado['Condicao'] == null)
+                          widget.vacinado['Condicao'] = 'N.A.';
                         setState(() {
                           widget.vacinado['Data'] = DateTime.now();
                           if (_formKey.currentState!.validate())

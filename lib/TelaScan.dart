@@ -23,19 +23,23 @@ Future<void> Scanner_main() async {
 }
 
 class Scanner extends StatelessWidget {
+  Scanner(this.dadosVacinacao, {Key? key}) : super(key: key);
+  dynamic dadosVacinacao;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tela de Scanear',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: CameraScreen(),
+          primarySwatch: Colors.green,
+          scaffoldBackgroundColor: Colors.lightGreen[100]),
+      home: CameraScreen(dadosVacinacao),
     );
   }
 }
 
 class CameraScreen extends StatefulWidget {
+  CameraScreen(this.dadosVacinacao, {Key? key}) : super(key: key);
+  dynamic dadosVacinacao;
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
@@ -131,7 +135,8 @@ class _CameraScreenState extends State<CameraScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailScreen(path),
+                                builder: (context) =>
+                                    DetailScreen(path, widget.dadosVacinacao),
                               ),
                             );
                           }

@@ -119,8 +119,11 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                       // Scanner_main();
                       //print('passei do scanner main');
                       // if (ativouCamera)
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Scanner()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Scanner(widget.dadosVacinacao)));
                       // else
                       //   Future.delayed(const Duration(milliseconds: 2000), () {
                       //     ativouCamera = true;

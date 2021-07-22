@@ -25,11 +25,17 @@ class _TelaFormularioState extends State<TelaFormulario> {
   var maskFormatterCNS = MaskTextInputFormatter(mask: '### #### #### ####');
 
   int _gestantePuerpera() {
-    if (widget.vacinado['Condicao'] == 'Gestante')
+    print(
+        "vacinado[condicao] = _${widget.vacinado['Condicao']}_ e vacinado['Gestante'] = _${widget.vacinado['Gestante']}_");
+    if (widget.vacinado['Condicao'] == 'Gestante' ||
+        widget.vacinado['Gestante'] == "S")
       return 0;
-    else if (widget.vacinado['Condicao'] == 'N.A.')
+    else if (widget.vacinado['Condicao'] == 'N.A.' ||
+        (widget.vacinado['Gestante'] == "N" &&
+            widget.vacinado['Puérpera'] == "N"))
       return 1;
-    else if (widget.vacinado['Condicao'] == 'Puérpera') return 2;
+    else if (widget.vacinado['Condicao'] == 'Puérpera' ||
+        widget.vacinado['Puérpera'] == "S") return 2;
     return 1;
   }
 
@@ -58,7 +64,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                 children: <Widget>[
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(hintText: "Nome"),
+                    decoration:
+                        InputDecoration(hintText: "Nome", labelText: "Nome"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o nome.' : null,
                     onChanged: (input) => widget.vacinado['Nome'] = input,
@@ -66,34 +73,31 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(hintText: "Nome da mãe"),
+                    decoration: InputDecoration(
+                        hintText: "Nome da mãe", labelText: "Nome da mãe"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o nome da mãe.' : null,
                     onChanged: (input) =>
                         widget.vacinado['Nome da mãe'] = input,
                     initialValue: widget.vacinado['Nome da mãe'],
                   ),
-                  // TextFormField(
-                  //   textInputAction: TextInputAction.next,
-                  //   decoration: InputDecoration(hintText: "Nome social"),
-                  //   onChanged: (input) =>
-                  //       widget.vacinado['Nome social'] = input,
-                  //   initialValue: widget.vacinado['Nome social'],
-                  // ),
                   TextFormField(
                       textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(hintText: "Email"),
+                      decoration: InputDecoration(
+                          hintText: "E-mail", labelText: "E-mail"),
                       validator: (input) =>
-                          input!.isEmpty ? 'Digite o email.' : null,
+                          input!.isEmpty ? 'Digite o e-mail.' : null,
                       onChanged: (input) => widget.vacinado['Email'] = input,
                       initialValue: widget.vacinado['Email']),
                   TextFormField(
-                    enabled: false,
-                    inputFormatters: [
-                      widget.vacinado['botao']
-                          ? maskFormatterCPF
-                          : maskFormatterCNS
-                    ],
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                        labelText: widget.vacinado['botao'] ? "CPF" : "CNS"),
+                    validator: (input) => input!.isEmpty
+                        ? 'Digite o ${widget.vacinado['botao'] ? 'CPF' : 'CNS'}'
+                        : null,
+                    onChanged: (input) => widget.vacinado[
+                        widget.vacinado['botao'] ? 'CPF' : 'CNS'] = input,
                     initialValue: widget.vacinado['botao']
                         ? widget.vacinado['CPF']
                         : widget.vacinado['CNS'],
@@ -101,7 +105,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   TextFormField(
                     inputFormatters: [LengthLimitingTextInputFormatter(11)],
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(hintText: "Telefone"),
+                    decoration: InputDecoration(
+                        hintText: "Telefone", labelText: "Telefone"),
                     validator: (input) =>
                         input!.isEmpty ? 'Digite o telefone.' : null,
                     onChanged: (input) => widget.vacinado['Telefone'] = input,
@@ -110,14 +115,16 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   TextFormField(
                       textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(hintText: "Endereço"),
+                      decoration: InputDecoration(
+                          hintText: "Endereço", labelText: "Endereço"),
                       validator: (input) =>
                           input!.isEmpty ? 'Digite o endereço.' : null,
                       onChanged: (input) => widget.vacinado['Endereço'] = input,
                       initialValue: widget.vacinado['Endereço']),
                   DateTimeField(
-                      decoration:
-                          InputDecoration(hintText: "Data de Nascimento"),
+                      decoration: InputDecoration(
+                          hintText: "Data de nascimento",
+                          labelText: "Data de nascimento"),
                       onChanged: (input) =>
                           widget.vacinado['Nascimento'] = input,
                       format: format,
@@ -134,6 +141,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                         value == null ? 'Preencha o sexo.' : null,
                     value: dropdownValueSexo,
                     hint: Text('Selecione o sexo'),
+                    decoration: InputDecoration(
+                        labelText: dropdownValueSexo == null ? "" : "Sexo"),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
@@ -154,6 +163,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                         value == null ? 'Preencha a raça.' : null,
                     value: dropdownValueRaca,
                     hint: Text('Selecione a raça'),
+                    decoration: InputDecoration(
+                        labelText: dropdownValueRaca == null ? "" : "Raça"),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
@@ -180,6 +191,8 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   ToggleSwitch(
                     totalSwitches: 3,
+                    minHeight: tamanhoDispositivo.height * .06,
+                    minWidth: tamanhoDispositivo.width * .2,
                     labels: ['Gestante', 'N.A.', 'Puérpera'],
                     initialLabelIndex: _gestantePuerpera(),
                     onToggle: (index) {
@@ -189,7 +202,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                               ? widget.vacinado['Condicao'] = 'N.A.'
                               : (index == 2)
                                   ? widget.vacinado['Condicao'] = 'Puérpera'
-                                  : widget.vacinado['Condicao'] = null;
+                                  : widget.vacinado['Condicao'] = 'N.A.';
                     },
                   ),
                   SizedBox(
@@ -197,7 +210,10 @@ class _TelaFormularioState extends State<TelaFormulario> {
                   ),
                   ElevatedButton(
                       onPressed: () async {
-                        widget.vacinado['numeroDose'] = '1';
+                        if (widget.vacinado['numeroDose'] == null)
+                          widget.vacinado['numeroDose'] = '1';
+                        if (widget.vacinado['Condicao'] == null)
+                          widget.vacinado['Condicao'] = 'N.A.';
                         setState(() {
                           widget.vacinado['Data'] = DateTime.now();
                           if (_formKey.currentState!.validate())

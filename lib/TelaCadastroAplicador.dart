@@ -1,14 +1,14 @@
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'TelaLogin.dart';
 import 'package:flutter/services.dart';
 
 class CadastroAplicador extends StatefulWidget {
-  const CadastroAplicador(this.aplicador, {Key? key, this.title})
+  const CadastroAplicador(this.aplicador, this.tokens, {Key? key})
       : super(key: key);
-  final String? title;
+
+  final dynamic tokens;
   final Map<String, dynamic> aplicador;
   @override
   _CadastroAplicadorState createState() => _CadastroAplicadorState();
@@ -76,50 +76,22 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
   }
 
   String? _validarToken(String? token) {
-    dynamic db = FirebaseFirestore.instance
-        .collection('tokens')
-        .get(); //FirebaseDatabase.instance.reference().child("tokens");
-
-    db.then((snapshot) {
-      List data = snapshot.docs;
-      for (var valor in data) {
-        print(valor.data()['token']);
-        if (valor.data()['token'] == token) {
-          achou = true;
-          print(achou);
-          return null;
-        }
-      }
-      print(achou);
-      // data.any((valores) {
-      //   print(valores.data());
-      //   if (token == valores.data()['token']) {
-      //     achou = true;
-      //     // print(achou);
-      //   }
-      //   return achou;
-      // });
-    });
-    if (!achou) {
-      print(achou);
-      print("entrou");
-      return "Token invalido";
+    for (var i in widget.tokens) {
+      if (i['token'] == token) return null;
     }
-
-    return achou ? null : "Token invalido";
+    return 'Token inválido';
   }
 
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title!)),
+      appBar: AppBar(title: Text('Página de cadastro do aplicador')),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
             width: tamanhoDispositivo.width * .8,
             height: tamanhoDispositivo.height * .75,
-            //decoration: BoxDecoration(border: Border.all()),
             child: Form(
               key: _formKey,
               child: Column(
@@ -139,6 +111,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                       ],
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(hintText: "CPF"),
+                      keyboardType: TextInputType.number,
                       validator: (input) => _validarCPF(input),
                       onChanged: (input) => widget.aplicador['CPF'] = input),
                   Spacer(),
@@ -149,11 +122,9 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                           input!.isEmpty ? 'Digite o Coren' : null,
                       onChanged: (input) => widget.aplicador['Coren'] = input),
                   Spacer(),
-
                   TextFormField(
                       textInputAction: TextInputAction.next,
-                      validator: (val) => _validarEmail(
-                          val), //val!.isEmpty ? 'Digite algo.' : null,
+                      validator: (val) => _validarEmail(val),
                       decoration: InputDecoration(
                         hintText: "Digite seu email",
 
@@ -163,14 +134,10 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                         setState(() => email = val);
                         widget.aplicador['Email'] = val;
                       }),
-
                   Spacer(),
-
-                  // Senha e token talvez serão separados, vamos ver isso depois.
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => _validarSenha(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarSenha(val),
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText
@@ -190,8 +157,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   Spacer(),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => _validarToken(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarToken(val),
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText2
@@ -230,7 +196,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                         });
                       },
                       child: Text('Registrar')),
-
                   Text(
                     error,
                     style: TextStyle(color: Colors.red, fontSize: (14.0)),

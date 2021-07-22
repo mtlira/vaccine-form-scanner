@@ -81,10 +81,11 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
     vacinado['Endereço'] = json['Endereco'];
     vacinado['Nascimento'] = json['Data de nascimento'].toDate();
     // vacinado['Dose'] = json['1a dose'];
-    vacinado['Grupo'] = json['Grupo'];
+    //vacinado['Grupo'] = json['Grupo'];
     vacinado['Condicao'] = json['Condicao'];
     vacinado['Nome da mãe'] = json['Nome da mãe'];
     vacinado['Raça'] = json['Raça'];
+    vacinado['numeroDose'] = '2';
   }
 
   FutureBuilder _pegarDados(String? cpfCns) {
@@ -95,28 +96,47 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.connectionState == ConnectionState.done) {
-              dynamic json = snapshot.data.data();
-              print(json);
-              if (json == null) {
-                vacinado.clear();
+              if (snapshot.hasError) {
+                print(snapshot.error);
                 vacinado[botao ? 'CPF' : 'CNS'] = cpfCns;
+                vacinado['botao'] = botao;
+                vacinado['Aplicador'] = aplicador['nome'];
+                if (passar) {
+                  SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    apertado = false;
+                    passar = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaFormulario(
+                                vacinado, widget.dadosVacinacao)));
+                  });
+                }
+                return Container();
+              } else {
+                dynamic json = snapshot.data.data();
+                print(json);
+                if (json == null) {
+                  vacinado.clear();
+                  vacinado[botao ? 'CPF' : 'CNS'] = cpfCns;
+                }
+                if (json != null) _mapearVacinado(json);
+                vacinado['botao'] = botao;
+                vacinado['Aplicador'] = aplicador['nome'];
+                print(vacinado);
+                if (passar) {
+                  SchedulerBinding.instance!.addPostFrameCallback((_) {
+                    apertado = false;
+                    passar = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TelaFormulario(
+                                vacinado, widget.dadosVacinacao)));
+                  });
+                }
+                return Icon(Icons.check_circle_outline);
               }
-              if (json != null) _mapearVacinado(json);
-              vacinado['botao'] = botao;
-              vacinado['Aplicador'] = aplicador['nome'];
-              print(vacinado);
-              if (passar) {
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
-                  apertado = false;
-                  passar = false;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TelaFormulario(vacinado, widget.dadosVacinacao)));
-                });
-              }
-              return Icon(Icons.check_circle_outline);
 
               // Chegaram erros
             } else if (snapshot.hasError) {
@@ -184,11 +204,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                             if (_formKey.currentState!.validate())
                               apertado = true;
                             passar = true;
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             TelaFormulario(vacinado)));
                           });
                         },
                         child: Text('Próximo')),

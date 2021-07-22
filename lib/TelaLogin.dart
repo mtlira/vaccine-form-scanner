@@ -20,6 +20,8 @@ class _TelaLoginState extends State<TelaLogin> {
   final _formkey = GlobalKey<FormState>();
   bool apertado = false;
   bool passar = false;
+  bool apertadoToken = false;
+  bool passarToken = false;
   String email = '';
   String password = '';
   String error = '';
@@ -79,6 +81,40 @@ class _TelaLoginState extends State<TelaLogin> {
         });
   }
 
+  FutureBuilder _dadosTokens() {
+    return FutureBuilder(
+        future: pegarTokens(),
+        builder: (context, snapshot) {
+          dynamic tokens = [];
+          if (apertadoToken) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return CircularProgressIndicator();
+            if (snapshot.connectionState == ConnectionState.done) {
+              snapshot.data.docs.forEach((doc) => {tokens.add(doc.data())});
+              print(tokens);
+              print(passarToken);
+              print(apertadoToken);
+              apertadoToken = false;
+              if (passarToken) {
+                passarToken = false;
+                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CadastroAplicador(widget.dadosRegistro, tokens)));
+                });
+              }
+            }
+            if (snapshot.hasError) {
+              print("Erro: ${snapshot.error}");
+            }
+            return Container();
+          }
+          return Container();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size tamanhoDispositivo = MediaQuery.of(context).size;
@@ -94,8 +130,6 @@ class _TelaLoginState extends State<TelaLogin> {
         child: Container(
           height: tamanhoDispositivo.height * .8,
           width: tamanhoDispositivo.width * .8,
-          // decoration: BoxDecoration(border: Border.all()),
-          // padding: EdgeInsets.all(89),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -104,6 +138,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   key: _formkey,
                   child: Column(children: [
                     TextFormField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: "Email"),
                         validator: (val) =>
                             val!.isEmpty ? 'Digite o email.' : null,
@@ -151,25 +186,14 @@ class _TelaLoginState extends State<TelaLogin> {
                   }
                 },
               ),
-              // Text(
-              //   error,
-              //   style: TextStyle(
-              //       color: Colors.red,
-              //       fontSize: tamanhoDispositivo.width * .05),
-              // ),
               _dadosVacinas(),
+              _dadosTokens(),
               Spacer(),
-              //Spacer(),
               ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CadastroAplicador(
-                              widget.dadosRegistro,
-                              title: 'Página de cadastro do aplicador'),
-                        ));
-                  },
+                  onPressed: () => setState(() {
+                        apertadoToken = true;
+                        passarToken = true;
+                      }),
                   child: Text('Ir para tela de cadastro do aplicador')),
             ],
           ),

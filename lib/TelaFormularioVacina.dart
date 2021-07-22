@@ -242,7 +242,9 @@ class _TelaVacinaState extends State<TelaVacina> {
                   ),
                   _campoGrupo(widget.vacinado['Grupo']),
                   DateTimeField(
-                    initialValue: DateTime.now(),
+                    initialValue: widget.vacinado['Aplicação'] == null
+                        ? DateTime.now()
+                        : widget.vacinado['Aplicação'],
                     decoration: InputDecoration(
                         hintText: "Data de aplicação",
                         labelText: "Data de aplicação"),
@@ -263,8 +265,10 @@ class _TelaVacinaState extends State<TelaVacina> {
                       onPressed: () async {
                         setState(() {
                           if (_formKey.currentState!.validate()) {
-                            dose['Data'] = widget.vacinado['Data'];
                             if (widget.vacinado['Scan'] == true) {
+                              if (widget.vacinado['Data'] == null)
+                                widget.vacinado['Data'] =
+                                    widget.vacinado['Aplicação'];
                               if (outro['Lote'] == null)
                                 outro['Lote'] = widget.vacinado['loteScan'];
                               if (outro['Vacina'] == null)
@@ -281,8 +285,10 @@ class _TelaVacinaState extends State<TelaVacina> {
                             if (dose['Vacina'] == 'Outro' ||
                                 widget.vacinado['tipoVac'] == 'Outro')
                               dose['Vacina'] = outro['Vacina'];
+                            if (widget.vacinado['Data'] == null)
+                              widget.vacinado['Data'] = DateTime.now();
+                            dose['Data'] = widget.vacinado['Data'];
                             widget.vacinado['Dose'] = dose;
-                            print(widget.vacinado['Vacina']);
                             registroVacinado(widget.vacinado);
                             Navigator.pushAndRemoveUntil(
                               context,

@@ -215,7 +215,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
                         if (widget.vacinado['Condicao'] == null)
                           widget.vacinado['Condicao'] = 'N.A.';
                         setState(() {
-                          widget.vacinado['Data'] = DateTime.now();
+                          // widget.vacinado['Data'] = DateTime.now();
                           if (_formKey.currentState!.validate())
                             Navigator.push(
                                 context,

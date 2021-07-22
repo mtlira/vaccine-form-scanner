@@ -76,26 +76,25 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                                 builder: (context) => TelaLogin({})),
                             (Route<dynamic> route) => false);
                       },
-                      child: Text('DESLOGAR'), // TODO: Colocar o tamanho bom
+                      child: Text(
+                        'DESLOGAR',
+                        style: TextStyle(
+                            fontSize: tamanhoDispositivo.height * .02),
+                      ),
                     ))
               ]),
           body: Center(
             child: Container(
-              // padding: EdgeInsets.all(48),
-              // color: Colors.lightGreen[200],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                    // color: Colors.blue,
                     child: Text(
                       "Digitar Formulario de vacinação",
                       style: new TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    // padding: EdgeInsets.all(24),
                     onPressed: () {
                       print(aplicador);
-                      // widget.dadosVacinacao['Aplicador'] = widget.nomeAplicador;
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -104,34 +103,18 @@ class _TelaVacinadorState extends State<TelaVacinador> {
                                   )));
                     },
                   ),
-                  // padding: EdgeInsets.all(24),
-
                   ElevatedButton(
-                    // color: Colors.blue,
                     child: Text(
                       "Escanear Formulario de vacinação",
                       style: new TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    // padding: EdgeInsets.all(24),
                     onPressed: () async {
                       print('apertou');
-
-                      // Scanner_main();
-                      //print('passei do scanner main');
-                      // if (ativouCamera)
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   Scanner(widget.dadosVacinacao)));
-                      // else
-                      //   Future.delayed(const Duration(milliseconds: 2000), () {
-                      //     ativouCamera = true;
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => Scanner()));
-                      //   });
                     },
                   ),
                   _ativarCamera()

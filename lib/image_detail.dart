@@ -245,7 +245,8 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     if (tipo == "DOSE") {
-      if (campos[indiceValorCampo].contains("Z") || campos[indiceValorCampo].contains("2"))
+      if (campos[indiceValorCampo].contains("Z") ||
+          campos[indiceValorCampo].contains("2"))
         campos[indiceValorCampo] = "2";
       if (campos[indiceValorCampo].contains("7") ||
           campos[indiceValorCampo].contains("T") ||
@@ -263,7 +264,7 @@ class _DetailScreenState extends State<DetailScreen> {
           campos[indiceValorCampo] == "N") {
         campos[indiceValorCampo] = "Masculino";
       } else
-          campos[indiceValorCampo] = "Ignorado";
+        campos[indiceValorCampo] = "Ignorado";
     }
 
     if (tipo == "GESTANTE" || tipo == "PUÉRPERA") {
@@ -320,9 +321,7 @@ class _DetailScreenState extends State<DetailScreen> {
         pre = "";
         pos = "";
       }
-    } 
-    
-    else {
+    } else {
       if (tipo == "VACINA") {
         palavras = ["CORONAVAC", "PFIZER", "JANSSEN", "ASTRAZENECA"];
         prefixos = [
@@ -400,7 +399,7 @@ class _DetailScreenState extends State<DetailScreen> {
         }
       }
       if (!preEncontrado || !posEncontrado) {
-        print('$preEncontrado, $posEncontrado'); 
+        print('$preEncontrado, $posEncontrado');
         if (tipo == "RAÇA") campos[indiceValorCampo] = "Não informada";
         if (tipo == "VACINA") campos[indiceValorCampo] = "Outra";
       }
@@ -613,6 +612,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       camposFormulario['Lote'] = 'Outro';
                       camposFormulario['Scan'] = true;
                       camposFormulario['numeroDose'] = camposFormulario['Dose'];
+                      print(camposFormulario);
                       Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -130,8 +130,6 @@ class _TelaLoginState extends State<TelaLogin> {
         child: Container(
           height: tamanhoDispositivo.height * .8,
           width: tamanhoDispositivo.width * .8,
-          // decoration: BoxDecoration(border: Border.all()),
-          // padding: EdgeInsets.all(89),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -188,11 +186,9 @@ class _TelaLoginState extends State<TelaLogin> {
                   }
                 },
               ),
-
               _dadosVacinas(),
               _dadosTokens(),
               Spacer(),
-              //Spacer(),
               ElevatedButton(
                   onPressed: () => setState(() {
                         apertadoToken = true;

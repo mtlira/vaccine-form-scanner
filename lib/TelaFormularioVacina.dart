@@ -27,13 +27,6 @@ class _TelaVacinaState extends State<TelaVacina> {
 
   Widget _dataAprazamento(vacina, data, dose) {
     if (dose == '1') {
-      // if (vacina == null)
-      //   return TextFormField(
-      //     enabled: false,
-      //     decoration: InputDecoration(
-      //         //labelText: 'Data de aprazamento',
-      //         hintText: 'Para a data de aprazamento, selecione uma vacina.'),
-      //   );
       if (vacina == 'CORONAVAC')
         return TextFormField(
           enabled: false,
@@ -107,11 +100,10 @@ class _TelaVacinaState extends State<TelaVacina> {
     if (opcao == "Outro" || widget.vacinado['Vacina'] == "Outra")
       return TextFormField(
           initialValue: widget.vacinado['Vacina'],
-          decoration: InputDecoration(
-            hintText: "Vacina"),
-          validator: (input) => input!.isEmpty ? 'Digite o nome da vacina.' : null,
-          onChanged: (input) => outro['Vacina'] = input
-        );
+          decoration: InputDecoration(hintText: "Vacina"),
+          validator: (input) =>
+              input!.isEmpty ? 'Digite o nome da vacina.' : null,
+          onChanged: (input) => outro['Vacina'] = input);
     return Container();
   }
 
@@ -147,7 +139,6 @@ class _TelaVacinaState extends State<TelaVacina> {
         child: Container(
           height: tamanhoDispositivo.height * 0.85,
           width: tamanhoDispositivo.height * 0.8,
-          // decoration: BoxDecoration(border: Border.all()),
           padding: EdgeInsets.all(32),
           child: Form(
             key: _formKey,
@@ -173,15 +164,16 @@ class _TelaVacinaState extends State<TelaVacina> {
                   DropdownButtonFormField<String>(
                     validator: (value) =>
                         value == null ? 'Preencha a vacina.' : null,
-                    value: widget.vacinado['Vacina'], //dropdownValueVacina,
+                    value: widget.vacinado['Vacina'],
                     hint: Text('Selecione a vacina a ser aplicada'),
-                    decoration: InputDecoration(labelText: widget.vacinado['Vacina'] == null? "" : "Vacina"),
+                    decoration: InputDecoration(
+                        labelText:
+                            widget.vacinado['Vacina'] == null ? "" : "Vacina"),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
                         widget.vacinado['Vacina'] = newValue!;
                         dose['Vacina'] = widget.vacinado['Vacina'];
-                        //dropdownValueVacina;
                       });
                     },
                     items: <String>[
@@ -202,9 +194,11 @@ class _TelaVacinaState extends State<TelaVacina> {
                     validator: (value) =>
                         value == null ? 'Preencha o lote.' : null,
                     isExpanded: true,
-                    value: widget.vacinado['Lote'], //dropdownValueLote,
+                    value: widget.vacinado['Lote'],
                     hint: Text('Lote'),
-                    decoration: InputDecoration(labelText: 'Lote'),
+                    decoration: InputDecoration(
+                        labelText:
+                            widget.vacinado['Lote'] == null ? "" : "Lote"),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
@@ -228,12 +222,14 @@ class _TelaVacinaState extends State<TelaVacina> {
                     isExpanded: true,
                     value: widget.vacinado['Grupo'],
                     hint: Text('Grupo de atendimento'),
-                    decoration: InputDecoration(labelText: 'Grupo de atendimento'),
+                    decoration: InputDecoration(
+                        labelText: widget.vacinado['Grupo'] == null
+                            ? ""
+                            : "Grupo de atendimento"),
                     dropdownColor: Colors.lightGreen[100],
                     onChanged: (String? newValue) {
                       setState(() {
                         widget.vacinado['Grupo'] = newValue!;
-                        //widget.vacinado['Grupo'] = dropdownValueOcupacao;
                       });
                     },
                     items:
@@ -248,9 +244,8 @@ class _TelaVacinaState extends State<TelaVacina> {
                   DateTimeField(
                     initialValue: DateTime.now(),
                     decoration: InputDecoration(
-                      hintText: "Data de aplicação",
-                      labelText: "Data de aplicação"
-                    ),
+                        hintText: "Data de aplicação",
+                        labelText: "Data de aplicação"),
                     onChanged: (input) =>
                         setState(() => widget.vacinado['Data'] = input),
                     format: format,

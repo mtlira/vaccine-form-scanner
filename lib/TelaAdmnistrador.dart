@@ -20,13 +20,7 @@ class _TelaAdministradorState extends State<TelaAdministrador> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.green.shade400),
               ),
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => CadastroAplicador()),
-                // );
-              },
+              onPressed: () {},
               child: const Text('  Cadastrar aplicador  '),
             ),
             const SizedBox(height: 30),
@@ -35,12 +29,7 @@ class _TelaAdministradorState extends State<TelaAdministrador> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.green.shade400),
               ),
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => GerenciarAplicadores()),
-                // );
-              },
+              onPressed: () {},
               child: const Text('Gerenciar aplicadores'),
             ),
           ],

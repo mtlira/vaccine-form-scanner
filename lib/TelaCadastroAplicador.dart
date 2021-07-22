@@ -1,7 +1,6 @@
 import 'package:aplicativo/auth.dart';
 import 'package:flutter/material.dart';
 import 'conexaoFirestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'TelaLogin.dart';
 import 'package:flutter/services.dart';
 
@@ -93,7 +92,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
           child: Container(
             width: tamanhoDispositivo.width * .8,
             height: tamanhoDispositivo.height * .75,
-            //decoration: BoxDecoration(border: Border.all()),
             child: Form(
               key: _formKey,
               child: Column(
@@ -124,11 +122,9 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                           input!.isEmpty ? 'Digite o Coren' : null,
                       onChanged: (input) => widget.aplicador['Coren'] = input),
                   Spacer(),
-
                   TextFormField(
                       textInputAction: TextInputAction.next,
-                      validator: (val) => _validarEmail(
-                          val), //val!.isEmpty ? 'Digite algo.' : null,
+                      validator: (val) => _validarEmail(val),
                       decoration: InputDecoration(
                         hintText: "Digite seu email",
 
@@ -138,14 +134,10 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                         setState(() => email = val);
                         widget.aplicador['Email'] = val;
                       }),
-
                   Spacer(),
-
-                  // Senha e token talvez serão separados, vamos ver isso depois.
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => _validarSenha(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarSenha(val),
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText
@@ -165,8 +157,7 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                   Spacer(),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    validator: (val) => _validarToken(
-                        val), //val!.isEmpty ? 'Digite algo.' : null,
+                    validator: (val) => _validarToken(val),
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           icon: Icon(_obscureText2
@@ -205,7 +196,6 @@ class _CadastroAplicadorState extends State<CadastroAplicador> {
                         });
                       },
                       child: Text('Registrar')),
-
                   Text(
                     error,
                     style: TextStyle(color: Colors.red, fontSize: (14.0)),

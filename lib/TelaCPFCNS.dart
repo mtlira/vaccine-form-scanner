@@ -204,11 +204,6 @@ class _TelaCPFCNSState extends State<TelaCPFCNS> {
                             if (_formKey.currentState!.validate())
                               apertado = true;
                             passar = true;
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             TelaFormulario(vacinado)));
                           });
                         },
                         child: Text('Próximo')),

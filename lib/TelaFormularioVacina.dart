@@ -26,6 +26,8 @@ class _TelaVacinaState extends State<TelaVacina> {
   Map<String, dynamic> outro = {};
 
   Widget _dataAprazamento(vacina, data, dose) {
+    if (data == null) data = widget.vacinado['Aplicação'];
+    if (data == null) data = DateTime.now();
     if (dose == '1') {
       if (vacina == 'CORONAVAC')
         return TextFormField(
@@ -60,6 +62,14 @@ class _TelaVacinaState extends State<TelaVacina> {
               helperText: 'Data de aprazamento',
               hintText: 'DOSE UNICA'), // PFIZER: 84 dias
         );
+      return TextFormField(
+        enabled: false,
+        decoration: InputDecoration(
+            //labelText: 'Data de aprazamento',
+            helperText: 'Data de aprazamento',
+            hintText:
+                'Para a data de aprazamento, selecione uma vacina'), // PFIZER: 84 dias
+      );
     }
     return Container();
   }
@@ -99,7 +109,9 @@ class _TelaVacinaState extends State<TelaVacina> {
   Widget _campoVac(String? opcao) {
     if (opcao == "Outro" || widget.vacinado['Vacina'] == "Outra")
       return TextFormField(
-          initialValue: widget.vacinado['Vacina'],
+          initialValue: widget.vacinado['Vacina'] == 'Outro'
+              ? ''
+              : widget.vacinado['Vacina'],
           decoration: InputDecoration(hintText: "Vacina"),
           validator: (input) =>
               input!.isEmpty ? 'Digite o nome da vacina.' : null,

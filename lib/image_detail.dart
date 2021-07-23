@@ -188,12 +188,20 @@ class _DetailScreenState extends State<DetailScreen> {
     List dataStr = []; //usado para formatar campos de data
     List dataInt = [0, 0, 0];
     bool dataInvalida = false;
+    List provedorEmail = ["@GMAIL.COM","@HOTMAIL.COM"];
+    List redundProvedorEmail = [["GMAIL","6MAIL","GMA1L","6MA1L","GMAII","6MAII"],
+                                ["HOTMA","H0TMA","HOIMA","H0IMA"]];
     String dataCorrigida;
     var dataFinal;
     //remocao de whitespaces nas extremidades
     campos[indiceValorCampo] = campos[indiceValorCampo].trim();
 
     // correcoes de possiveis erros de leitura
+
+    //remocao de espacos incorretos
+    if (tipo != "NOME" && tipo != "NOME DA MÃE" && tipo != "ENDEREÇO")
+        trocar(indiceValorCampo, " ","");
+
     if (tipo == "NOME" ||
         tipo == "NOME DA MÃE" ||
         tipo == "RAÇA" ||
@@ -221,6 +229,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     if (tipo == "NASCIMENTO" || tipo == "APLICAÇÃO") {
+      trocar(indiceValorCampo, "|", "/");
       dataStr = campos[indiceValorCampo].split('/');
       try {
         for (int i = 0; i < dataStr.length; i++) {
@@ -247,10 +256,11 @@ class _DetailScreenState extends State<DetailScreen> {
     if (tipo == "DOSE") {
       if (campos[indiceValorCampo].contains("Z") ||
           campos[indiceValorCampo].contains("2"))
-        campos[indiceValorCampo] = "2";
+          campos[indiceValorCampo] = "2";
       if (campos[indiceValorCampo].contains("7") ||
           campos[indiceValorCampo].contains("T") ||
           campos[indiceValorCampo].contains("L") ||
+          campos[indiceValorCampo].contains("|") ||
           campos[indiceValorCampo].contains("I"))
         campos[indiceValorCampo] == "1";
     }
@@ -274,6 +284,18 @@ class _DetailScreenState extends State<DetailScreen> {
         campos[indiceValorCampo] = "S";
       if (campos[indiceValorCampo].contains("N"))
         campos[indiceValorCampo] = "N";
+    }
+
+    if (tipo == "EMAIL") {
+      for (int i = 0; i < provedorEmail.length; i++) {
+        for (int j = 0; j < redundProvedorEmail[i].length; j++) {
+          if (campos[indiceValorCampo].contains(redundProvedorEmail[i][j])) {
+            campos[indiceValorCampo] = campos[indiceValorCampo].substring(0,
+              campos[indiceValorCampo].lastIndexOf(redundProvedorEmail[i][j])-1) + provedorEmail[i];
+          }
+        }
+      }
+      
     }
 
     if (tipo == "ENDEREÇO") {
@@ -371,6 +393,7 @@ class _DetailScreenState extends State<DetailScreen> {
           3,
         ];
       }
+
 
       for (int i = 0; i < palavras.length && !preEncontrado; i++) {
         for (int j = 0; j < prefixos[i].length; j++) {

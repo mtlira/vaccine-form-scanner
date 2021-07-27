@@ -271,7 +271,7 @@ class _TelaVacinaState extends State<TelaVacina> {
                           lastDate: DateTime(2022));
                     },
                   ),
-                  _dataAprazamento(dose['Vacina'], widget.vacinado['Data'],
+                  _dataAprazamento(widget.vacinado['Vacina'], widget.vacinado['Data'], //antes: dose['Vacina']
                       widget.vacinado['numeroDose']),
                   ElevatedButton(
                       onPressed: () async {

@@ -1,7 +1,5 @@
 import 'package:aplicativo/TelaVacinador.dart';
 import 'package:flutter/material.dart';
-import 'package:aplicativo/TelaFormularioVacina.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'conexaoFirestore.dart';
@@ -271,7 +269,9 @@ class _TelaVacinaState extends State<TelaVacina> {
                           lastDate: DateTime(2022));
                     },
                   ),
-                  _dataAprazamento(widget.vacinado['Vacina'], widget.vacinado['Data'], //antes: dose['Vacina']
+                  _dataAprazamento(
+                      widget.vacinado['Vacina'],
+                      widget.vacinado['Data'], //antes: dose['Vacina']
                       widget.vacinado['numeroDose']),
                   ElevatedButton(
                       onPressed: () async {

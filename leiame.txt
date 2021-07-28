@@ -3,8 +3,8 @@ EXECUÇÃO DO PROJETO - GRUPO 4
 Há duas possibilidades: usar apenas o aplicativo pelo apk,
 ou rodar pelo computador, que permite modificar o aplicativo.
 
-Pelo apk, basta baixar pelo link: https://drive.google.com/file/d/1vKIGmmN9ApYnMObNvCeDs32UmDghjPTh/view?usp=sharing
-Mirror: https://www.mediafire.com/file/hv928naokv3fyq2/app-release.apk/file
+Pelo apk, basta baixar pelo link: https://drive.google.com/file/d/1YzjFr4MPK8Dk_F13SWydMxKl65D55zsH/view?usp=sharing
+Mirror: https://www.mediafire.com/file/u0310p1g5kyrrl5/Aplicativo_-_Grupo_4.apk/file
 após baixar, basta permitir instalação de apps por fontes desconhecidas, em seguida é apenas instalar e o app já funciona. 
 Não é possível rodar no iOS, pois seria necessário termos um Mac, o que não temos. Caso não tenha nenhum dispositivo Android, é possível utilizar um
 emulador como o Bluestacks. Essa é a maneira mais fácil de se utilizar o aplicativo, pois não demanda nenhum download adicional.

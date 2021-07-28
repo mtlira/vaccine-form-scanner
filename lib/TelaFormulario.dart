@@ -90,7 +90,10 @@ class _TelaFormularioState extends State<TelaFormulario> {
                       onChanged: (input) => widget.vacinado['Email'] = input,
                       initialValue: widget.vacinado['Email']),
                   TextFormField(
-                    inputFormatters: [LengthLimitingTextInputFormatter(11)],
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(
+                          widget.vacinado['botao'] ? 11 : 15)
+                    ],
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
